@@ -1,0 +1,234 @@
+﻿{
+   "appConfigs":{
+      "companyShortName":"abcbank",
+      "companyFullName":"ABC Bank limited",
+      "companyType":"ISLAMIC",
+      "ios":{
+         "bundleId":"clicknet.com",
+         "version":"1.0",
+         "buildNumber":1
+      },
+      "android":{
+         "applicationId":"com.bankname.appname",
+         "versionCode":1,
+         "versionName":"1.0"
+      }
+   },
+   "mainMenu":[
+      {
+         "key":"HOME",
+         "title":"Home",
+         "localTitle":"বাড়ি",
+         "enabled":false
+      },
+      {
+         "key":"DASHBOARD",
+         "title":"Dashboard",
+         "localTitle":"ড্যাশবোর্ড",
+         "enabled":false
+      },
+      {
+         "key":"PROFILE",
+         "title":"Profile",
+         "localTitle":"প্রোফাইল",
+         "enabled":true
+      },
+      {
+         "key":"ACCOUNTS",
+         "title":"Accounts",
+         "localTitle":"হিসাব সমূহ",
+         "enabled":true
+      },
+      {
+         "key":"TRANSFER",
+         "title":"Transfer",
+         "localTitle":"হস্তান্তর",
+         "enabled":true
+      },
+      {
+         "key":"QRPAY",
+         "title":"QR Pay",
+         "localTitle":"কিউআর পে",
+         "enabled":true
+      },
+      {
+         "key":"UTILITY_BILLS",
+         "title":"Bills",
+         "localTitle":"বিল পে",
+         "enabled":true
+      },
+      {
+         "key":"TOPUPS",
+         "title":"TopUp",
+         "localTitle":"টপআপ",
+         "enabled":true
+      },
+      {
+         "key":"TUTIONFEES",
+         "title":"Tution Fees",
+         "localTitle":"টিউশন ফিস",
+         "enabled":false
+      },
+      {
+         "key":"CREDITCARD",
+         "title":"Credit Card",
+         "localTitle":"ক্রেডিট কার্ড",
+         "enabled":false
+      },
+      {
+         "key":"INSTRUCTION",
+         "title":"Instruction",
+         "localTitle":"নির্দেশনা",
+         "enabled":true
+      },
+      {
+         "key":"REQUEST",
+         "title":"Requests",
+         "localTitle":"রিকোয়েষ্টস",
+         "enabled":true
+      },
+      {
+         "key":"DEPOSIT_SLIP",
+         "title":"Deposit Slip",
+         "localTitle":"ডিপোজিট স্লিপ",
+         "enabled":true
+      },
+      {
+         "key":"LOCATION",
+         "title":"Locations",
+         "localTitle":"লোকেশনস",
+         "enabled":true
+      },
+      {
+         "key":"EMICALC",
+         "title":"EMI Calc",
+         "localTitle":"ইএমআই ক্যাল",
+         "enabled":true
+      },
+      {
+         "key":"EXCHANGERATE",
+         "title":"Exchange Rate",
+         "localTitle":"এক্সচেঞ্জ রেট",
+         "enabled":true
+      },
+      {
+         "key":"NOTIFICATION",
+         "title":"Nofifications",
+         "localTitle":"নোটিফিকেশনস",
+         "enabled":false
+      },
+      {
+         "key":"MESSAGECENTER",
+         "title":"Msg Center",
+         "localTitle":"ম্যাসেজ সেন্টার",
+         "enabled":true
+      },
+      {
+         "key":"NEWS_N_EVENTS",
+         "title":"News",
+         "localTitle":"নিউজ",
+         "enabled":false
+      },
+      {
+         "key":"PRODUCTS",
+         "title":"Products",
+         "localTitle":"প্রোডাক্টস",
+         "enabled":true
+      },
+      {
+         "key":"BENEFITS",
+         "title":"Benefits",
+         "localTitle":"বেনিফিটস",
+         "enabled":true
+      },
+      {
+         "key":"ZIPPARTNERS",
+         "title":"Merchants",
+         "localTitle":"মার্সেন্টস",
+         "enabled":true
+      },
+      {
+         "key":"CONTACTS",
+         "title":"Contacts",
+         "localTitle":"কন্টাক্টস",
+         "enabled":true
+      },
+      {
+         "key":"INFO",
+         "title":"Info",
+         "localTitle":"ইনফো",
+         "enabled":true
+      }
+   ],
+   "customerRequestMenu":[
+      {
+         "key":"STOP_CHEQUE",
+         "title":"Stop Cheque",
+         "localTitle":"চেক বন্ধ",
+         "enabled":true
+      },
+      {
+         "key":"ORDER_CHEQUE",
+         "title":"Order Cheque Book",
+         "localTitle":"অর্ডার চেক বুক",
+         "enabled":true
+      },
+      {
+         "key":"STATEMENTS",
+         "title":"Statements",
+         "localTitle":"স্টেটমেন্টস",
+         "enabled":true
+      },
+      {
+         "key":"CHANGE_ADDRESS",
+         "title":"Change Address",
+         "localTitle":"ঠিকানা পরিবর্তন",
+         "enabled":true
+      },
+      {
+         "key":"LOST_CARD",
+         "title":"Lost Card",
+         "localTitle":"কার্ড হারানো",
+         "enabled":true
+      },
+      {
+         "key":"COMPLAIN",
+         "title":"Complain",
+         "localTitle":"অভিযোগ",
+         "enabled":true
+      }
+   ],
+   "Privacies":[
+      {
+         "ID":"1",
+         "Text":"It was the long & cherished desire of Bangladeshi expatriates in different countries of the world to establish a new bank for economic development of the motherland through their hard earned foreign currency.Demand for new Bank by the ABCs anticipating more flow of inward foreign remittance and scope of investment by other investors of different countries is an acceptable ground for consideration. ABC sponsors shall not only bring huge investable fund but also “state of the art technology” for building up a world standard Bank tailored towards meeting local developmental needs of the country."
+      }
+   ],
+   "FAQs":[
+      {
+         "Question":"What is mobile banking and how it works?",
+         "Answer":"Mobile banking is the act of making financial transactions on a mobile device (cell phone, tablet, etc.). This activity can be as simple as a bank sending fraud or usage activity to a client's cell phone or as complex as a client paying bills or sending money abroad.",
+         "OrderId":"1"
+      },
+      {
+         "Question":"What is the use of mobile banking?",
+         "Answer":"Mobile banking allows consumers to be able to access banking services from anywhere. Businesses and business owners are now able to save time by making use of mobile applications to process their payments or even receive funds from clients directly to their phone numbers.",
+         "OrderId":"2"
+      },
+      {
+         "Question":"What are the benefits of mobile banking?",
+         "Answer":"ForWith the help of Mobile, Banking user can transfer funds, and pay bills, checking account balance, study your recent transaction, block your ATM card, etc. Mobile Banking is cost-effective.",
+         "OrderId":"3"
+      },
+      {
+         "Question":"How do I access my money?",
+         "Answer":"For Money Market and High Yield Savings Accounts, you have 24/7 access to your money online, over the phone, with an optional ATM card.",
+         "OrderId":"4"
+      },
+      {
+         "Question":"Do I have access to view my account and tax statements online?",
+         "Answer":"Yes, primary account owners can view account and tax statements online. All account owners have online ability to view complete transaction history.",
+         "OrderId":"5"
+      }
+   ]
+}
