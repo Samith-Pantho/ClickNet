@@ -1,4 +1,21 @@
 from .Common.StatusResult import StatusResult
+
 from .AppSettings.AppSettingsSchema import AppSettingsSchema
+
 from .Customer.CustomerRegistrationSchema import CustomerRegistrationSchema
+from .Customer.CustomerUserProfileSchema import CustomerUserProfileSchema
+from .Customer.CustomerOtpSchema import CustomerOtpSchema
+
+from .System.SystemActivitySchema import SystemActivitySchema
 from .System.SystemLogErrorSchema import SystemLogErrorSchema
+
+from .CBS.CBSCustomerInfoSchema import CBSCustomerInfoSchema
+from .CBS.CBSCustomerAccountsSchema import CBSCustomerAccountsSchema
+from .CBS.CBSAccountDetailsSchema import CBSAccountDetailsSchema
+from .CBS.CBSAccountFullDetailsSchema import CBSAccountFullDetailsSchema
+from .CBS.CBSAccountBalanceDetailsSchema import CBSAccountBalanceDetailsSchema
+from .CBS.CBSCustomerAddressSchema import CBSCustomerAddressSchema
+from .CBS.CBSCustomerEmailSchema import CBSCustomerEmailSchema
+from .CBS.CBSCustomerPhoneSchema import CBSCustomerPhoneSchema
+from .CBS.CBSCustomerFullInfoSchema import CBSCustomerFullInfoSchema
+from .CBS.CBSAccountWiseTransLimitInfoSchema import CBSAccountWiseTransLimitInfoSchema

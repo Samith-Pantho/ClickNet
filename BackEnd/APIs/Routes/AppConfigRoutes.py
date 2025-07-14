@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from Schemas.shared import StatusResult
-from Schemas.System.SystemLogErrorSchema import SystemLogErrorSchema
+from Schemas.shared import StatusResult, SystemLogErrorSchema
 from Services.LogServices import AddLogOrError
 from Services.AppSettingsServices import FetchAppSettingsByKey
 from Services.CommonServices import LoadJsonFromFile

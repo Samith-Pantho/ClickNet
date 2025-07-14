@@ -1,0 +1,46 @@
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional
+from datetime import datetime
+
+class CustomerUserProfileSchema(BaseModel):
+    user_id: str = Field(..., title="User ID")
+    user_nm: Optional[str] = Field(None, title="User Name")
+    user_descrip: Optional[str] = Field(None, title="User Description")
+    password_string: Optional[str] = Field(None, title="Password")
+    force_password_changed_flag: Optional[bool] = Field(None, title="Force Password Changed Flag")
+    last_password_changed_on: Optional[datetime] = Field(None, title="Last Password Changed On")
+    last_signed_on: Optional[datetime] = Field(None, title="Last Signed On")
+    user_status_active_flag: Optional[bool] = Field(None, title="User Status Active Flag")
+    user_status_changed_on: Optional[datetime] = Field(None, title="User Status Changed On")
+    user_profile_closed_flag: Optional[bool] = Field(None, title="User Profile Closed Flag")
+    user_profile_closed_on: Optional[datetime] = Field(None, title="User Profile Closed On")
+    failed_login_attempts_nos: Optional[int] = Field(None, title="Failed Login Attempts")
+    failed_pasword_recovery_attempts_nos: Optional[int] = Field(None, title="Failed Password Recovery Attempts")
+    failed_userid_recovery_attempts_nos: Optional[int] = Field(None, title="Failed User ID Recovery Attempts")
+    failed_tpin_recovery_attempts_nos: Optional[int] = Field(None, title="Failed TPIN Recovery Attempts")
+    recent_alert_msg: Optional[str] = Field(None, title="Recent Alert Message")
+    customer_id: Optional[str] = Field(None, title="Customer ID")
+    home_branch_id: Optional[str] = Field(None, title="Home Branch ID")
+    user_address: Optional[str] = Field(None, title="User Address")
+    email_address: Optional[EmailStr] = Field(None, title="Email Address")
+    email_address_hash: Optional[str] = Field(None, title="Email Address Hash")
+    mobile_number: Optional[str] = Field(None, title="Mobile Number")
+    mobile_number_hash: Optional[str] = Field(None, title="Mobile Number Hash")
+    authentication_type: Optional[str] = Field(None, title="Authentication Type")
+    created_by: Optional[str] = Field(None, title="Created By")
+    creation_dt: Optional[datetime] = Field(None, title="Creation Date")
+    last_activation_by: Optional[str] = Field(None, title="Last Activation By")
+    last_activation_dt: Optional[datetime] = Field(None, title="Last Activation Date")
+    auth_1st_by: Optional[str] = Field(None, title="Auth 1st By")
+    auth_2nd_by: Optional[str] = Field(None, title="Auth 2nd By")
+    auth_1st_dt: Optional[datetime] = Field(None, title="Auth 1st Date")
+    auth_2nd_dt: Optional[datetime] = Field(None, title="Auth 2nd Date")
+    auth_status_id: Optional[str] = Field(None, title="Auth Status ID")
+    last_action: Optional[str] = Field(None, title="Last Action")
+    locked_flag: Optional[bool] = Field(None, title="Locked Flag")
+    locked_by: Optional[str] = Field(None, title="Locked By")
+    locked_dt: Optional[datetime] = Field(None, title="Locked Date")
+    locked_reason: Optional[str] = Field(None, title="Locked Reason")
+
+    class Config:
+        from_attributes = True  # enables ORM conversion
