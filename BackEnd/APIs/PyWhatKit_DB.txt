@@ -1,10 +1,0 @@
-Date: 13/7/2025
-Time: 23:45
-Phone Number: +358417434881
-Message: <p>Welcome to <strong>ClickNet</strong>! Your login credentials are:</p><ul> <li><strong>User ID:</strong> 100000001</li> <li><strong>Password:</strong> 123456</li></ul><p>Please keep this information secure.</p>
---------------------
-Date: 13/7/2025
-Time: 23:55
-Phone Number: +358417434881
-Message: <p>Welcome to <strong>ClickNet</strong>! Your login credentials are:</p><ul> <li><strong>User ID:</strong> 100000001</li> <li><strong>Password:</strong> 123456</li></ul><p>Please keep this information secure.</p>
---------------------

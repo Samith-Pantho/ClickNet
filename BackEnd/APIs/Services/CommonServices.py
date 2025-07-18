@@ -13,7 +13,7 @@ from Crypto.Util.Padding import pad, unpad
 from Crypto.Random import get_random_bytes
 from twilio.rest import Client
 from email.mime.text import MIMEText
-from Schemas.shared import SystemLogErrorSchema
+from Schemas.shared import SystemLogErrorSchema, NotificationViewModelSchema
 from .LogServices import AddLogOrError
 from .AppSettingsServices import FetchAppSettingsByKey
 
@@ -236,3 +236,25 @@ def ConvertToBool(value):
         raise ValueError("Invalid input type. Expected string.")
     
     return value.strip().lower() in ('true', '1', 'yes', 'y', 't')
+
+async def SendNotification(data:NotificationViewModelSchema) -> bool:
+    try:
+        if data.Delivery_channel.upper() == "SMS":
+            return await SendSMS(data.Phone, data.Message)
+        elif data.Delivery_channel.upper() == "EMAIL":
+            return await SendEmail(data.Email,data.Title, data.Message)
+        else:
+            isSMSsent = await SendSMS(data.Phone, data.Message)
+            isEmailSent = await SendEmail(data.Email,data.Title, data.Message)
+            if isSMSsent or isEmailSent:
+                return True
+            else:
+                return False
+    except Exception as ex:
+        AddLogOrError(SystemLogErrorSchema(
+            Msg = str(ex),
+            Type = "ERROR",
+            ModuleName = "CommonServices/SendNotification",
+            CreatedBy = ""
+        ))
+        return False

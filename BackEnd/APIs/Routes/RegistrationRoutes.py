@@ -1,9 +1,9 @@
 from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import and_, func, or_
-from Config.dbConnection import conn, engine 
+from Config.dbConnection import engine 
 from Models.shared import customerRegistration, customerUserProfile
-from Schemas.shared import StatusResult, SystemLogErrorSchema, SystemActivitySchema, CustomerRegistrationSchema, CustomerOtpSchema, CBSCustomerFullInfoSchema
+from Schemas.shared import StatusResult, SystemLogErrorSchema, SystemActivitySchema, CustomerRegistrationSchema, CustomerOtpSchema, CBSCustomerFullInfoSchema, CustomerUserProfileSchema
 from Services.LogServices import AddLogOrError
 from Services.ActivityServices import AddActivityLog
 from Services.AppSettingsServices import FetchAppSettingsByKey
@@ -12,6 +12,31 @@ from Services.CBSServices import GetCustomerFullInformation
 from Services.OTPServices import GenerateCode, Authentication
 
 RegistrationRoutes = APIRouter(prefix="/Registration")
+
+@RegistrationRoutes.get("/IsUserIDAvailable")
+def IsUserIDAvailable(user_id: str) -> StatusResult:
+    status = StatusResult()
+    try:
+        user_profile = CustomerUserProfileSchema()
+        
+        with engine.connect() as _conn:
+            result = _conn.execute(customerUserProfile.select().where(func.lower(customerUserProfile.c.USER_ID) == user_id.lower())).first()
+        
+            if result:
+                user_profile = CustomerUserProfileSchema(**dict(result._mapping))
+            else:
+                user_profile = None
+        
+        status.Status = "OK"
+        status.Message = None
+        status.Result = not bool(user_profile)
+        
+        return status
+    except Exception as ex:
+        status.Status = "FAILED"
+        status.Message = GetErrorMessage(ex)
+        status.Result = None
+        return status
 
 @RegistrationRoutes.post("/SignUp")
 async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
@@ -48,7 +73,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = ""
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -67,7 +92,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = None
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -87,7 +112,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = ""
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -107,7 +132,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
                 status.Result = ""
                 
                 AddActivityLog(SystemActivitySchema(
-                    Type="SECURITYUPDATE",
+                    Type="SELF-SIGNUP",
                     Title="Failed to add a SignUp Request",
                     Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                     IpAddress="",
@@ -125,7 +150,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = None
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -143,7 +168,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = None
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -160,7 +185,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
                 status.Result = None
                 
                 AddActivityLog(SystemActivitySchema(
-                    Type="SECURITYUPDATE",
+                    Type="SELF-SIGNUP",
                     Title="Failed to add a SignUp Request",
                     Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                     IpAddress="",
@@ -175,7 +200,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = None
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -192,7 +217,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = None
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -209,7 +234,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
                 status.Result = None
                 
                 AddActivityLog(SystemActivitySchema(
-                    Type="SECURITYUPDATE",
+                    Type="SELF-SIGNUP",
                     Title="Failed to add a SignUp Request",
                     Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                     IpAddress="",
@@ -224,7 +249,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = None
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -249,7 +274,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
                 status.Result = None
                 
                 AddActivityLog(SystemActivitySchema(
-                    Type="SECURITYUPDATE",
+                    Type="SELF-SIGNUP",
                     Title="Failed to add a SignUp Request",
                     Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                     IpAddress="",
@@ -267,7 +292,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = None
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -290,7 +315,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
                 status.Result = None
                 
                 AddActivityLog(SystemActivitySchema(
-                    Type="SECURITYUPDATE",
+                    Type="SELF-SIGNUP",
                     Title="Failed to add a SignUp Request",
                     Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                     IpAddress="",
@@ -305,7 +330,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = None
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -350,7 +375,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = ""
             
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -487,7 +512,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = None
                         
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Successful SignUp Request",
                 Details=f"{data.user_id.lower()} has succeded to add a SignUp Request.",
                 IpAddress="",
@@ -539,7 +564,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             status.Result = None
         
             AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
@@ -561,7 +586,7 @@ async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
             CreatedBy=""
         ))
         AddActivityLog(SystemActivitySchema(
-                Type="SECURITYUPDATE",
+                Type="SELF-SIGNUP",
                 Title="Failed to add a SignUp Request",
                 Details=f"{data.user_id.lower()} has failed to add a SignUp Request. Reason: {status.Message}",
                 IpAddress="",
