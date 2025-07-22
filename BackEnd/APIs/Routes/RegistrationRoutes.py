@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy import and_, func, or_
 from Config.dbConnection import engine 
 from Models.shared import customerRegistration, customerUserProfile
-from Schemas.shared import StatusResult, SystemLogErrorSchema, SystemActivitySchema, CustomerRegistrationSchema, CustomerOtpSchema, CBSCustomerFullInfoSchema, CustomerUserProfileSchema
+from Schemas.shared import StatusResult, SystemLogErrorSchema, SystemActivitySchema, RegistrationViewModelSchema, CustomerOtpSchema, CBSCustomerFullInfoSchema, CustomerUserProfileSchema
 from Services.LogServices import AddLogOrError
 from Services.ActivityServices import AddActivityLog
 from Services.AppSettingsServices import FetchAppSettingsByKey
@@ -39,7 +39,7 @@ def IsUserIDAvailable(user_id: str) -> StatusResult:
         return status
 
 @RegistrationRoutes.post("/SignUp")
-async def SignUp(data:CustomerRegistrationSchema) -> StatusResult:
+async def SignUp(data:RegistrationViewModelSchema) -> StatusResult:
     status = StatusResult[object]()
     try:
         # UserID Setting

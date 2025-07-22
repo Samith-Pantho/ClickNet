@@ -1,12 +1,13 @@
 from datetime import datetime, timedelta
 from typing import Optional
 import uuid
+from fastapi import Depends, HTTPException
 import jwt
 from sqlalchemy import and_, desc, func, select
 from Config.dbConnection import engine 
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from Models.shared import customerUserProfile, customerSession
-from Schemas.shared import SystemLogErrorSchema, CustomerUserProfileSchema
+from Schemas.shared import SystemLogErrorSchema, CustomerUserProfileSchema, CustomoerSessionSchema
 from .LogServices import AddLogOrError
 from .AppSettingsServices import FetchAppSettingsByKey
 from .CommonServices import GetDecryptedText, GetEncryptedText
@@ -16,7 +17,7 @@ access_token_time = float(FetchAppSettingsByKey("ACCESS_TOKEN_TIME"))
 
 security = HTTPBearer()
 
-def ValidateJWTToken(credentials: HTTPAuthorizationCredentials) -> CustomerUserProfileSchema:
+def ValidateJWTToken(credentials: HTTPAuthorizationCredentials = Depends(security)) -> CustomerUserProfileSchema:
     now_date = datetime.now()
     expiry_date = now_date
     valid_user = CustomerUserProfileSchema()
@@ -29,7 +30,7 @@ def ValidateJWTToken(credentials: HTTPAuthorizationCredentials) -> CustomerUserP
         user_id = GetDecryptedText(payload.get("UserId"))
         expiry_date_str = payload.get("ExpiryDate")
         if expiry_date_str:
-            expiry_date = datetime.strptime(expiry_date_str, "%d-%b-%Y")
+            expiry_date = datetime.strptime(expiry_date_str, '%Y-%m-%dT%H:%M:%S.%f')
         session_id = GetDecryptedText(payload.get("SessionID"))
 
     except Exception as ex:
@@ -39,13 +40,13 @@ def ValidateJWTToken(credentials: HTTPAuthorizationCredentials) -> CustomerUserP
             ModuleName = "JWTTokenServices/ValidateJWTToken",
             CreatedBy = ""
         ))
-        raise ValueError("Valid token required")
+        raise HTTPException(status_code=401, detail="Valid token required")
 
     if not user_id or not session_id:
-        raise ValueError("Valid token required")
+        raise HTTPException(status_code=401, detail="Valid token required")
 
     if now_date > expiry_date:
-        raise ValueError("Token expired")
+        raise HTTPException(status_code=401, detail="Token expired")
 
     if user_id:
         with engine.connect() as _conn:
@@ -57,13 +58,13 @@ def ValidateJWTToken(credentials: HTTPAuthorizationCredentials) -> CustomerUserP
                 valid_user = None
 
         if valid_user:
-            check_active_session = customerSession()
+            check_active_session = CustomoerSessionSchema()
             with engine.connect() as _conn:
                 result = _conn.execute(
                     select(customerSession)
                     .where(
                         and_(
-                            func.lower(customerSession.c.UserId) == func.lower(user_id),
+                            func.lower(customerSession.c.USER_ID) == func.lower(user_id),
                             customerSession.c.ACTIVE_FLAG == 1,
                             customerSession.c.SESSION_ID ==  session_id
                         )
@@ -73,17 +74,17 @@ def ValidateJWTToken(credentials: HTTPAuthorizationCredentials) -> CustomerUserP
                 ).fetchone()
 
                 if result:
-                    check_active_session = CustomerUserProfileSchema(**dict(result._mapping))
+                    check_active_session = CustomoerSessionSchema(**dict(result._mapping))
                 else:
-                    check_active_session + None
+                    check_active_session = None
             
             if check_active_session:
                 return valid_user
             else:
-                raise ValueError("Token deactivated")
+                raise HTTPException(status_code=401, detail="Token deactivated")
         else:
-            raise ValueError("Invalid token")
-    raise ValueError("Invalid token")
+            raise HTTPException(status_code=401, detail="Invalid token")
+    raise HTTPException(status_code=401, detail="Invalid token")
 
 def GenerateJWTToken(user_id:str, ip_address:str) -> str:
     algorithm = "HS256"

@@ -1,12 +1,11 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class NotificationViewModelSchema(BaseModel):
-    Title: str
-    Message: str
-    Phone: str
-    Email: Optional[str]
-    Delivery_channel: str
+class ChangePasswordViewModelSchema(BaseModel):
+    UserID: str
+    OldPassword: str
+    NewPassword: str
+    ConfirmNewPassword: str
 
     class Config:
         from_attributes = True  # Enables compatibility with ORM models

@@ -2,16 +2,19 @@ from .Common.StatusResult import StatusResult
 
 from .AppSettings.AppSettingsSchema import AppSettingsSchema
 
-from .Customer.CustomerRegistrationSchema import CustomerRegistrationSchema
 from .Customer.CustomerUserProfileSchema import CustomerUserProfileSchema
 from .Customer.CustomerOtpSchema import CustomerOtpSchema
 from .Customer.CustomoerSessionSchema import CustomoerSessionSchema
+from .Customer.CustomerPasswordHistSchema import CustomerPasswordHistSchema
 
 from .System.SystemActivitySchema import SystemActivitySchema
 from .System.SystemLogErrorSchema import SystemLogErrorSchema
 
 from .Internal.LoginViewModelSchema import LoginViewModelSchema
 from .Internal.NotificationViewModelSchema import NotificationViewModelSchema
+from .Internal.ChangePasswordViewModelSchema import ChangePasswordViewModelSchema
+from .Internal.ForgetPasswordViewModelSchema import ForgetPasswordViewModelSchema
+from .Internal.RegistrationViewModelSchema import RegistrationViewModelSchema
 
 from .CBS.CBSCustomerInfoSchema import CBSCustomerInfoSchema
 from .CBS.CBSCustomerAccountsSchema import CBSCustomerAccountsSchema

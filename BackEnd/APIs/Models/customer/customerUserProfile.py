@@ -17,7 +17,6 @@ customerUserProfile = Table(
     Column("FAILED_LOGIN_ATTEMPTS_NOS", SmallInteger),
     Column("FAILED_PASWORD_RECOVERY_ATTEMPTS_NOS", SmallInteger),
     Column("FAILED_USERID_RECOVERY_ATTEMPTS_NOS", SmallInteger),
-    Column("FAILED_TPIN_RECOVERY_ATTEMPTS_NOS", SmallInteger),
     Column("RECENT_ALERT_MSG", String(255)),
     Column("CUSTOMER_ID", String(50)),
     Column("HOME_BRANCH_ID", String(20)),

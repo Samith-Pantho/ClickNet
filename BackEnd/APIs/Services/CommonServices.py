@@ -11,9 +11,12 @@ from typing import Any
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from Crypto.Random import get_random_bytes
+from sqlalchemy import and_, desc, func, select
 from twilio.rest import Client
 from email.mime.text import MIMEText
-from Schemas.shared import SystemLogErrorSchema, NotificationViewModelSchema
+from Models.shared import customerSession
+from Schemas.shared import SystemLogErrorSchema, NotificationViewModelSchema, CustomoerSessionSchema
+from Config.dbConnection import engine 
 from .LogServices import AddLogOrError
 from .AppSettingsServices import FetchAppSettingsByKey
 
@@ -258,3 +261,32 @@ async def SendNotification(data:NotificationViewModelSchema) -> bool:
             CreatedBy = ""
         ))
         return False
+    
+def GetCurrentActiveSession(user_id:str) -> CustomoerSessionSchema :
+    try:
+        with engine.connect() as _conn:
+            result = _conn.execute(
+                select(customerSession)
+                .where(
+                    and_(
+                        func.lower(customerSession.c.USER_ID) == func.lower(user_id),
+                        customerSession.c.ACTIVE_FLAG == 1,
+                        customerSession.c.STATUS == 1
+                    )
+                )
+                .order_by(desc(customerSession.c.START_TIME)) 
+                .limit(1)
+            ).fetchone()
+
+            if result:
+                return CustomoerSessionSchema(**dict(result._mapping))
+            else:
+                return None
+    except Exception as ex:
+        AddLogOrError(SystemLogErrorSchema(
+            Msg = str(ex),
+            Type = "ERROR",
+            ModuleName = "CommonServices/GetCurrentActiveSession",
+            CreatedBy = ""
+        ))
+        return None

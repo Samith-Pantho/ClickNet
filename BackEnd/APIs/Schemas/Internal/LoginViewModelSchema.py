@@ -2,9 +2,9 @@ from pydantic import BaseModel
 from typing import Optional
 
 class LoginViewModelSchema(BaseModel):
-    UserID: Optional[str]
-    Password: Optional[str]
-    IPAddress: Optional[str]
+    UserID: str
+    Password: str
+    IPAddress: str
     OTP: Optional[str]
     OTP_verify_channel: Optional[str]
 

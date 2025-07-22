@@ -17,7 +17,6 @@ class CustomerUserProfileSchema(BaseModel):
     failed_login_attempts_nos: Optional[int] = Field(None, alias="FAILED_LOGIN_ATTEMPTS_NOS")
     failed_pasword_recovery_attempts_nos: Optional[int] = Field(None, alias="FAILED_PASWORD_RECOVERY_ATTEMPTS_NOS")
     failed_userid_recovery_attempts_nos: Optional[int] = Field(None, alias="FAILED_USERID_RECOVERY_ATTEMPTS_NOS")
-    failed_tpin_recovery_attempts_nos: Optional[int] = Field(None, alias="FAILED_TPIN_RECOVERY_ATTEMPTS_NOS")
     recent_alert_msg: Optional[str] = Field(None, alias="RECENT_ALERT_MSG")
     customer_id: Optional[str] = Field(None, alias="CUSTOMER_ID")
     home_branch_id: Optional[str] = Field(None, alias="HOME_BRANCH_ID")

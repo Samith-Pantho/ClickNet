@@ -49,7 +49,6 @@ def _CheckLoginCredentials(data: LoginViewModelSchema) -> CustomerUserProfileSch
                                     user_profile.failed_login_attempts_nos = 0
                                     user_profile.failed_pasword_recovery_attempts_nos = 0
                                     user_profile.failed_userid_recovery_attempts_nos = 0
-                                    user_profile.failed_tpin_recovery_attempts_nos = 0
                                     
                                     if user_profile.last_password_changed_on:
                                         password_expiry_date = user_profile.last_password_changed_on + timedelta(days=password_expiry_days)
@@ -321,10 +320,10 @@ async def Login(data: LoginViewModelSchema) -> StatusResult:
         AddActivityLog(SystemActivitySchema(
             Type="LOGIN",
             Title="Failed to Login",
-            Details=f"{cust_user_profile.user_id.lower()} has failed to Login. Reason: {status.Message}",
+            Details=f"{data.UserID.lower()} has failed to Login. Reason: {status.Message}",
             IpAddress="",
             UserType="USER",
-            User_Id=cust_user_profile.user_id.lower()
+            User_Id=data.UserID.lower()
         ))
         return status
 
