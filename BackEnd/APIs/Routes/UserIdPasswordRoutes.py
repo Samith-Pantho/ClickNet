@@ -3,12 +3,12 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import func
 from Config.dbConnection import engine 
 from Models.shared import customerPasswordHist, customerUserProfile
-from Schemas.shared import StatusResult, SystemActivitySchema, SystemLogErrorSchema,ChangePasswordViewModelSchema, ForgetPasswordViewModelSchema, CustomerPasswordHistSchema, CustomoerSessionSchema, CustomerOtpSchema, CustomerUserProfileSchema
+from Schemas.shared import StatusResult, SystemActivitySchema, SystemLogErrorSchema,ChangePasswordViewModelSchema, ForgetPasswordViewModelSchema, CustomerPasswordHistSchema, ForgetUserIdViewModelSchema, CustomerOtpSchema, CustomerUserProfileSchema
 from Services.ActivityServices import AddActivityLog
 from Services.JWTTokenServices import ValidateJWTToken
 from Services.LogServices import AddLogOrError
 from Services.AppSettingsServices import FetchAppSettingsByKey
-from Services.CommonServices import GetSha1Hash, GetDecryptedText, ConvertToBool, GetCurrentActiveSession, GetErrorMessage, SendEmail, SendSMS
+from Services.CommonServices import GetSha1Hash, GetDecryptedText, ConvertToBool, GetCurrentActiveSession, GetErrorMessage, SendCredentials, SendEmail, SendSMS
 from Services.GenericCRUDServices import GenericInserter, GenericUpdater
 from Services.OTPServices import Authentication, GenerateCode
 from Services.CBSServices import GetCustomerFullInformation
@@ -17,6 +17,7 @@ restricted = FetchAppSettingsByKey("RESTRICT_SPECIAL_CHARACTERS_FOR_PASSWORD")
 PassLengthMax  = int(FetchAppSettingsByKey("PASSWORD_POLICY_MAX_PASSWORD_LENGTH"))
 PassLengthMin  = int(FetchAppSettingsByKey("PASSWORD_POLICY_MIN_PASSWORD_LENGTH"))
 ForgetPasswordFailedAttemptsLimit  = int(FetchAppSettingsByKey("FORGET_PASSWORD_FAILED_ATTEMPTS_LIMIT"))
+ForgetUserIdFailedAttemptsLimit  = int(FetchAppSettingsByKey("FORGET_USERID_FAILED_ATTEMPTS_LIMIT"))
 NonAlphaNumCharMin  = int(FetchAppSettingsByKey("PASSWORD_POLICY_MIN_NON_ALPHA_NUMERIC_CHAR_COUNT"))
 SamePassReuseMax  = int(FetchAppSettingsByKey("PASSWORD_POLICY_MAX_SAME_PASSWORD_REUSE_COUNT"))
 SamePassRepeatAllowAfter  = int(FetchAppSettingsByKey("PASSWORD_POLICY_SAME_PASSWORD_REPEAT_ALLOWED_AFTER_DAYS"))
@@ -28,11 +29,13 @@ NumberMin  = int(FetchAppSettingsByKey("PASSWORD_POLICY_MIN_NUMBER_COUNT"))
 DobVerificationMendatoryAtForgetPassword= FetchAppSettingsByKey("DOB_VERIFICATION_MENDATORY_AT_FORGET_PASSWORD")
 MobileVerificationMendatoryAtForgetPassword= FetchAppSettingsByKey("MOBILE_MENDATORY_AT_FORGET_PASSWORD")
 TaxidVerificationMendatoryAtForgetPassword= FetchAppSettingsByKey("TAXID_MENDATORY_AT_FORGET_PASSWORD")
+DobVerificationMendatoryAtForgetUserId= FetchAppSettingsByKey("DOB_VERIFICATION_MENDATORY_AT_FORGET_USERID")
+MobileVerificationMendatoryAtForgetUserId= FetchAppSettingsByKey("MOBILE_MENDATORY_AT_FORGET_USERID")
+TaxidVerificationMendatoryAtForgetUserId= FetchAppSettingsByKey("TAXID_MENDATORY_AT_FORGET_USERID")
 AutoGeneretedPasswordAtForgetPassword = FetchAppSettingsByKey("AUTO_GENARATED_PASSWORD")
 AutoUserActivationAtForgetPassword = FetchAppSettingsByKey("AUTO_USER_ACTIVATION_AFTER_FORGET_PASSWORD")
-SendMethod = FetchAppSettingsByKey("CREDENTIALS_SENDING_PROCESS").upper()
 
-PasswordRoutes = APIRouter(prefix="/Password")
+UserIdPasswordRoutes = APIRouter(prefix="/UserIdPassword")
 
 customerUserProfileUpdater = GenericUpdater[CustomerUserProfileSchema, type(customerUserProfile)]()
 
@@ -122,7 +125,7 @@ def _CheckPasswordPolicy(plain_password:str, user_id:str) -> StatusResult:
     
     return status
 
-@PasswordRoutes.post("/ChangePassword")
+@UserIdPasswordRoutes.post("/ChangePassword")
 def ChangePassword(data: ChangePasswordViewModelSchema, currentCustuserprofile=Depends(ValidateJWTToken)):
     status = StatusResult[object]()
     status.Message = "Failed to change password"
@@ -279,54 +282,8 @@ async def _ResetPassword(data: ForgetPasswordViewModelSchema, user_profile: Cust
                 exclude_fields={} 
             )
 
-        is_credential_sent = False
-
-        if SendMethod == "SMS" and data.Phone:
-            body = FetchAppSettingsByKey("SMS_USER_FORGET_PASSWORD_BODY")
-            body = body.replace("_userId_", user_profile.user_id.lower()).replace("_password_", new_password)
-            #is_credential_sent = await SendSMS(data.Phone, body)
-        elif SendMethod == "EMAIL" and data.Email:
-            subject = "Credentials changed"
-            body = FetchAppSettingsByKey("EMAIL_USER_FORGET_PASSWORD_BODY")
-            body = body.replace("_userId_", user_profile.user_id.lower()).replace("_password_", new_password)
-            is_credential_sent = await SendEmail(data.Email, subject, body)
-        elif SendMethod == "BOTH":
-            if data.Phone:
-                body = FetchAppSettingsByKey("SMS_USER_FORGET_PASSWORD_BODY")
-                body = body.replace("_userId_", user_profile.user_id.lower()).replace("_password_", new_password)
-                #is_credential_sent = await SendSMS(data.Phone, body)
-            if data.Email:
-                subject = "Credentials changed"
-                body = FetchAppSettingsByKey("EMAIL_USER_FORGET_PASSWORD_BODY")
-                body = body.replace("_userId_", user_profile.user_id.lower()).replace("_password_", new_password)
-                is_credential_sent = await SendEmail(data.Email, subject, body)
-
-        if is_credential_sent:
-            status.Status = "OK"
-            if SendMethod == "SMS":
-                status.Message = "Credentials are changed successfully. Please Check your SMS for Login Credentials."
-            elif SendMethod == "EMAIL":
-                status.Message = "Credentials are changed successfully. Please Check your Mail for Login Credentials."
-            else:
-                status.Message = "Credentials are changed successfully. Please Check your Mail/SMS for Login Credentials."
-            status.Result = None
-            
-        else:
-            status.Status = "FAILED"
-            if SendMethod == "SMS":
-                status.Message = f"Could not send Credentials to {data.Phone}" if data.Phone else "Could not send Credentials"
-            elif SendMethod == "EMAIL":
-                status.Message = f"Could not send Credentials to {data.Email}" if data.Email else "Could not send Credentials"
-            elif SendMethod == "BOTH":
-                if data.Email and data.Phone:
-                    status.Message = f"Could not send Credentials to {data.Email} or {data.Phone}"
-                elif data.Phone:
-                    status.Message = f"Could not send Credentials to {data.Phone}"
-                elif data.Email:
-                    status.Message = f"Could not send Credentials to {data.Email}"
-                else:
-                    status.Message = "Could not send Credentials"
-            status.Result = None
+        status = await SendCredentials(user_profile, "FORGET_PASSWORD", new_password)
+        
         return status
     except Exception as ex:
         status.Status = "FAILED"
@@ -350,7 +307,7 @@ async def _ResetPassword(data: ForgetPasswordViewModelSchema, user_profile: Cust
         ))
         return status
 
-@PasswordRoutes.post("/ForgetPassword")
+@UserIdPasswordRoutes.post("/ForgetPassword")
 async def ForgetPassword(data: ForgetPasswordViewModelSchema):
     status = StatusResult()
     user_profile = CustomerUserProfileSchema()
@@ -452,15 +409,6 @@ async def ForgetPassword(data: ForgetPasswordViewModelSchema):
                     user_profile.locked_by=user_profile.user_id.lower()
                     user_profile.locked_dt=datetime.now()
                     user_profile.locked_reason=f"Account has been locked due to {ForgetPasswordFailedAttemptsLimit} times wrong attempts."
-                
-                customerUserProfileUpdater.update_record(
-                    table=customerUserProfile,
-                    schema_model=CustomerUserProfileSchema,
-                    record_id=user_profile.user_id,
-                    update_data=user_profile,
-                    id_column="USER_ID",
-                    exclude_fields={} 
-                )
             
             if user_profile.locked_reason:
                 raise ValueError(f"{ex}\n{user_profile.locked_reason}")
@@ -485,5 +433,144 @@ async def ForgetPassword(data: ForgetPasswordViewModelSchema):
             IpAddress="",
             UserType="USER",
             User_Id=data.UserID.lower()
+        ))
+        return status
+    
+@UserIdPasswordRoutes.post("/ForgetUserId")
+async def ForgetUserId(data: ForgetUserIdViewModelSchema):
+    status = StatusResult()
+    user_profile = CustomerUserProfileSchema()
+    try:
+        with engine.connect() as _conn:
+            result = _conn.execute(customerUserProfile.select().where(customerUserProfile.c.CUSTOMER_ID == data.CustomerID)).first()
+        
+            if result:
+                user_profile = CustomerUserProfileSchema(**dict(result._mapping))
+            else:
+                user_profile = None
+                
+        if not user_profile:
+            raise ValueError("Wrong Customer ID.")
+        
+        if user_profile.locked_flag == 1:
+            raise ValueError(user_profile.locked_reason or "Account is Locked.")
+
+        if user_profile.customer_id != data.CustomerID:
+            raise ValueError("Invalid User.")
+        
+        AddActivityLog(SystemActivitySchema(
+            Type="SECURITYUPDATE",
+            Title="Trying to fetch userid",
+            Details=f"{user_profile.user_id.lower()} is trying to fetch userid.",
+            IpAddress="",
+            UserType="USER",
+            User_Id=user_profile.user_id.lower()
+        ))
+        
+        try:
+            customer_info = GetCustomerFullInformation(user_profile.customer_id)
+
+            if ConvertToBool(DobVerificationMendatoryAtForgetUserId):
+                if data.BirthDate.strftime("%d-%b-%Y") != customer_info.customer.birth_date.strftime("%d-%b-%Y"):
+                    raise ValueError("Wrong Date of Birth.")
+
+            registered_email = GetDecryptedText(user_profile.email_address).strip().lower()
+            registered_mobile = GetDecryptedText(user_profile.mobile_number).strip()
+
+            if ConvertToBool(MobileVerificationMendatoryAtForgetUserId):
+                if data.Phone.strip() != registered_mobile:
+                    raise ValueError("Wrong Mobile Number.")
+                
+            if ConvertToBool(TaxidVerificationMendatoryAtForgetUserId):
+                if data.TaxID.strip() != customer_info.customer.tax_id:
+                    raise ValueError("Wrong Tax ID.")
+                
+            if data.Email:
+                if data.Email.strip().lower() != registered_email:
+                    raise ValueError("Wrong Email Address.")
+
+            # OTP/TPIN verification
+            status = await Authentication(CustomerOtpSchema(
+                user_id=user_profile.user_id.lower(),
+                cust_id=user_profile.customer_id,
+                phone_number=registered_mobile,
+                email_address=registered_email,
+                verification_channel=data.OTP_verify_channel,
+                otp=data.OTP
+            ))
+            
+            if  status.Status.upper() != "OK":
+                return status
+
+            # Reset Failed attempts
+            status = await SendCredentials(user_profile, "FORGET_USERID", None)
+            
+            if status.Status == "OK":
+                user_profile.failed_userid_recovery_attempts_nos = 0
+
+                customerUserProfileUpdater.update_record(
+                        table=customerUserProfile,
+                        schema_model=CustomerUserProfileSchema,
+                        record_id=user_profile.user_id,
+                        update_data=user_profile,
+                        id_column="USER_ID",
+                        exclude_fields={} 
+                    )
+            
+                AddActivityLog(SystemActivitySchema(
+                    Type="SECURITYUPDATE",
+                    Title="Fetched userid successfully",
+                    Details=f"{user_profile.user_id.lower()} is successful to fetch userid.",
+                    IpAddress="",
+                    UserType="USER",
+                    User_Id=user_profile.user_id.lower()
+                ))
+                return status
+            else:
+                raise ValueError (status.Message)
+
+        except Exception as ex:
+            if user_profile:
+                if user_profile.failed_userid_recovery_attempts_nos < ForgetUserIdFailedAttemptsLimit:
+                    user_profile.failed_userid_recovery_attempts_nos += 1
+                else:
+                    user_profile.failed_userid_recovery_attempts_nos = ForgetUserIdFailedAttemptsLimit
+                    user_profile.locked_flag = 1
+                    user_profile.locked_by=user_profile.user_id.lower()
+                    user_profile.locked_dt=datetime.now()
+                    user_profile.locked_reason=f"Account has been locked due to {ForgetUserIdFailedAttemptsLimit} times wrong attempts."
+                
+                customerUserProfileUpdater.update_record(
+                    table=customerUserProfile,
+                    schema_model=CustomerUserProfileSchema,
+                    record_id=user_profile.user_id,
+                    update_data=user_profile,
+                    id_column="USER_ID",
+                    exclude_fields={} 
+                )
+            
+            if user_profile.locked_reason:
+                raise ValueError(f"{ex}\n{user_profile.locked_reason}")
+            else:
+                raise ValueError(ex)
+    except Exception as ex:
+        status.Status = "FAILED"
+        status.Message = GetErrorMessage(ex)
+        status.Result = None
+        
+        AddLogOrError(SystemLogErrorSchema(
+            Msg=str(ex),
+            Type="ERROR",
+            ModuleName="PasswordRoutes/ForgetUserId",
+            CreatedBy=""
+        ))
+        
+        AddActivityLog(SystemActivitySchema(
+            Type="SECURITYUPDATE",
+            Title="Failed to reset password",
+            Details=f"{data.CustomerID} is failed to reset password. Reason : " + GetErrorMessage(ex),
+            IpAddress="",
+            UserType="USER",
+            User_Id="Anonymous"
         ))
         return status

@@ -4,10 +4,11 @@ from sqlalchemy import and_, func, or_
 from Config.dbConnection import engine 
 from Models.shared import customerRegistration, customerUserProfile
 from Schemas.shared import StatusResult, SystemLogErrorSchema, SystemActivitySchema, RegistrationViewModelSchema, CustomerOtpSchema, CBSCustomerFullInfoSchema, CustomerUserProfileSchema
+from Services.GenericCRUDServices import GenericInserter
 from Services.LogServices import AddLogOrError
 from Services.ActivityServices import AddActivityLog
 from Services.AppSettingsServices import FetchAppSettingsByKey
-from Services.CommonServices import ConvertToBool, GetSha1Hash, GetEncryptedText, SendSMS, SendEmail, GetErrorMessage
+from Services.CommonServices import ConvertToBool, GetSha1Hash, GetEncryptedText, SendCredentials, SendSMS, SendEmail, GetErrorMessage
 from Services.CBSServices import GetCustomerFullInformation
 from Services.OTPServices import GenerateCode, Authentication
 
@@ -407,83 +408,66 @@ async def SignUp(data:RegistrationViewModelSchema) -> StatusResult:
         
         # Include User in CustomerUserProfile
         plain_password = GenerateCode()
-        new_user = customerUserProfile.insert().values(
-                        USER_ID=data.user_id.lower(),
-                        USER_NM=cbs_customer_full_info.customer.name.upper(),
-                        USER_DESCRIP="Self Sign In",
-                        PASSWORD_STRING=GetSha1Hash(plain_password),
-                        FORCE_PASSWORD_CHANGED_FLAG=True,
-                        LAST_PASSWORD_CHANGED_ON=datetime.now(),
-                        LAST_SIGNED_ON=None,
-                        USER_STATUS_ACTIVE_FLAG=True,
-                        USER_STATUS_CHANGED_ON=datetime.now(),
-                        USER_PROFILE_CLOSED_FLAG=False,
-                        USER_PROFILE_CLOSED_ON=None,
-                        FAILED_LOGIN_ATTEMPTS_NOS=0,
-                        FAILED_PASWORD_RECOVERY_ATTEMPTS_NOS=0,
-                        FAILED_USERID_RECOVERY_ATTEMPTS_NOS=0,
-                        FAILED_TPIN_RECOVERY_ATTEMPTS_NOS=0,
-                        RECENT_ALERT_MSG=None,
-                        CUSTOMER_ID=cbs_customer_full_info.customer.customer_id,
-                        HOME_BRANCH_ID=cbs_customer_full_info.customer.branch_code,
-                        USER_ADDRESS = ", ".join(
-                                        filter(None, [
-                                            cbs_customer_full_info.addresses[0].line_1,
-                                            cbs_customer_full_info.addresses[0].line_2,
-                                            cbs_customer_full_info.addresses[0].line_3,
-                                            cbs_customer_full_info.addresses[0].line_4,
-                                            cbs_customer_full_info.addresses[0].city,
-                                            cbs_customer_full_info.addresses[0].state_code
-                                        ])
-                                    ) + (f", Zipcode : {cbs_customer_full_info.addresses[0].zip_code}" if cbs_customer_full_info.addresses[0].zip_code else ""),
-                        EMAIL_ADDRESS=GetEncryptedText(data.email),
-                        EMAIL_ADDRESS_HASH=GetSha1Hash(data.email),
-                        MOBILE_NUMBER=GetEncryptedText(data.phone_number),
-                        MOBILE_NUMBER_HASH=GetSha1Hash(data.phone_number),
-                        AUTHENTICATION_TYPE=FetchAppSettingsByKey("DEFAULT_AUTHENTICATION_TYPE"),
-                        CREATED_BY=data.user_id.lower(),
-                        CREATION_DT=datetime.now(),
-                        LAST_ACTIVATION_BY=data.user_id.lower(),
-                        LAST_ACTIVATION_DT=datetime.now(),
-                        AUTH_1ST_BY=None,
-                        AUTH_2ND_BY=None,
-                        AUTH_1ST_DT=None,
-                        AUTH_2ND_DT=None,
-                        AUTH_STATUS_ID="A",
-                        LAST_ACTION="ADD",
-                        LOCKED_FLAG=False,
-                        LOCKED_BY=None,
-                        LOCKED_DT=None,
-                        LOCKED_REASON=None
-                    )
-        
-        with engine.begin() as _conn:
-            _conn.execute(new_user)
-        
-        is_credential_sent = False
-        send_method = FetchAppSettingsByKey("CREDENTIALS_SENDING_PROCESS").upper()
+        new_user_profile = CustomerUserProfileSchema(
+            user_id=data.user_id.lower(),
+            user_nm=cbs_customer_full_info.customer.name.upper(),
+            user_descrip="Self Sign In",
+            password_string=GetSha1Hash(plain_password),
+            force_password_changed_flag=True,
+            last_password_changed_on=datetime.now(),
+            last_signed_on=None,
+            user_status_active_flag=True,
+            user_status_changed_on=datetime.now(),
+            user_profile_closed_flag=False,
+            user_profile_closed_on=None,
+            failed_login_attempts_nos=0,
+            failed_pasword_recovery_attempts_nos=0,
+            failed_userid_recovery_attempts_nos=0,
+            failed_tpin_recovery_attempts_nos=0,
+            recent_alert_msg=None,
+            customer_id=cbs_customer_full_info.customer.customer_id,
+            home_branch_id=cbs_customer_full_info.customer.branch_code,
+            user_address=", ".join(
+                filter(None, [
+                    cbs_customer_full_info.addresses[0].line_1,
+                    cbs_customer_full_info.addresses[0].line_2,
+                    cbs_customer_full_info.addresses[0].line_3,
+                    cbs_customer_full_info.addresses[0].line_4,
+                    cbs_customer_full_info.addresses[0].city,
+                    cbs_customer_full_info.addresses[0].state_code
+                ])
+            ) + (f", Zipcode : {cbs_customer_full_info.addresses[0].zip_code}" 
+                if cbs_customer_full_info.addresses[0].zip_code else ""),
+            email_address=GetEncryptedText(data.email),
+            email_address_hash=GetSha1Hash(data.email),
+            mobile_number=GetEncryptedText(data.phone_number),
+            mobile_number_hash=GetSha1Hash(data.phone_number),
+            authentication_type=FetchAppSettingsByKey("DEFAULT_AUTHENTICATION_TYPE"),
+            created_by=data.user_id.lower(),
+            creation_dt=datetime.now(),
+            last_activation_by=data.user_id.lower(),
+            last_activation_dt=datetime.now(),
+            auth_1st_by=None,
+            auth_2nd_by=None,
+            auth_1st_dt=None,
+            auth_2nd_dt=None,
+            auth_status_id="A",
+            last_action="ADD",
+            locked_flag=False,
+            locked_by=None,
+            locked_dt=None,
+            locked_reason=None
+        )
 
-        if send_method == "SMS" and data.phone_number:
-            body = FetchAppSettingsByKey("SMS_USER_SIGN_UP_BODY")
-            body = body.replace("_userId_", data.user_id.lower()).replace("_password_", plain_password)
-            #is_credential_sent = await SendSMS(data.phone_number, body)
-        elif send_method == "EMAIL" and data.email:
-            subject = "User SignUp"
-            body = FetchAppSettingsByKey("EMAIL_USER_SIGN_UP_BODY")
-            body = body.replace("_userId_", data.user_id.lower()).replace("_password_", plain_password)
-            is_credential_sent = await SendEmail(data.email, subject, body)
-        elif send_method == "BOTH":
-            if data.phone_number:
-                body = FetchAppSettingsByKey("SMS_USER_SIGN_UP_BODY")
-                body = body.replace("_userId_", data.user_id.lower()).replace("_password_", plain_password)
-                #is_credential_sent = await SendSMS(data.phone_number, body)
-            if data.email:
-                subject = "User SignUp"
-                body = FetchAppSettingsByKey("EMAIL_USER_SIGN_UP_BODY")
-                body = body.replace("_userId_", data.user_id.lower()).replace("_password_", plain_password)
-                is_credential_sent = await SendEmail(data.email, subject, body)
-
-        if is_credential_sent:
+        GenericInserter[CustomerUserProfileSchema].insert_record(
+            table=customerUserProfile,
+            schema_model=CustomerUserProfileSchema,
+            data=new_user_profile,
+            returning_fields=[]
+        )
+        status = await SendCredentials(new_user_profile, "SIGNUP", plain_password)
+        
+        if status.Status == "OK":
             # Update SignUp Request to PROCESSED
             update_customerRegistration = customerRegistration.update().values(
                                 STATUS="PROCESSED"
@@ -501,15 +485,6 @@ async def SignUp(data:RegistrationViewModelSchema) -> StatusResult:
             
             with engine.begin() as _conn:
                 _conn.execute(update_customerRegistration)
-                
-            status.Status = "OK"
-            if send_method == "SMS":
-                status.Message = "User Created Successfully. Please Check your SMS for Login Credentials."
-            elif send_method == "EMAIL":
-                status.Message = "User Created Successfully. Please Check your Mail for Login Credentials."
-            else:
-                status.Message = "User Created Successfully. Please Check your Mail/SMS for Login Credentials."
-            status.Result = None
                         
             AddActivityLog(SystemActivitySchema(
                 Type="SELF-SIGNUP",
@@ -546,22 +521,6 @@ async def SignUp(data:RegistrationViewModelSchema) -> StatusResult:
             
             with engine.begin() as _conn:
                 _conn.execute(update_customerRegistration)
-            
-            status.Status = "FAILED"
-            if send_method == "SMS":
-                status.Message = f"Could not send Credentials to {data.phone_number}" if data.phone_number else "Could not send Credentials"
-            elif send_method == "EMAIL":
-                status.Message = f"Could not send Credentials to {data.email}" if data.email else "Could not send Credentials"
-            elif send_method == "BOTH":
-                if data.email and data.phone_number:
-                    status.Message = f"Could not send Credentials to {data.email} or {data.phone_number}"
-                elif data.phone_number:
-                    status.Message = f"Could not send Credentials to {data.phone_number}"
-                elif data.email:
-                    status.Message = f"Could not send Credentials to {data.email}"
-                else:
-                    status.Message = "Could not send Credentials"
-            status.Result = None
         
             AddActivityLog(SystemActivitySchema(
                 Type="SELF-SIGNUP",

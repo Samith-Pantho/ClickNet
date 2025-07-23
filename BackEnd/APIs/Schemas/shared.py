@@ -15,6 +15,7 @@ from .Internal.NotificationViewModelSchema import NotificationViewModelSchema
 from .Internal.ChangePasswordViewModelSchema import ChangePasswordViewModelSchema
 from .Internal.ForgetPasswordViewModelSchema import ForgetPasswordViewModelSchema
 from .Internal.RegistrationViewModelSchema import RegistrationViewModelSchema
+from .Internal.ForgetUserIdViewModelSchema import ForgetUserIdViewModelSchema
 
 from .CBS.CBSCustomerInfoSchema import CBSCustomerInfoSchema
 from .CBS.CBSCustomerAccountsSchema import CBSCustomerAccountsSchema

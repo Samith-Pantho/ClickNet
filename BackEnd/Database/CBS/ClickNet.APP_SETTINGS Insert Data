@@ -1,0 +1,208 @@
+
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('ACCESS_TOKEN_TIME', 'JWT token expiry (minutes)', '1', '60');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('ADD_LOG_IN_FILE_OR_DB', 'Log location: FILE/DB/BOTH', '1', 'DB');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('APPLICATION_DEVELOPMENT_MODE', 'App running in development mode', '2', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('AUTO_GENARATED_PASSWORD', 'Enable auto-generated password', '2', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('AUTO_SET_USER_ID_AT_SIGNUP', 'Auto assign user ID', '2', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('AUTO_SET_USER_ID_TYPE_AT_SIGNUP', 'Auto assign ID type at signup : CIF/CIF_NON_ZERO/MOBILE/MOBILE_CIF/MOBILE_CIF_NON_ZERO', '2', 'CIF');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('AUTO_USER_ACTIVATION_AFTER_FORGET_PASSWORD', 'Auto activate user after reset', '2', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('CLICKNET_SENDER_EMAIL', 'Sender email for ClickNet', '3', 'serviceclicknet@gmail.com');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('CLICKNET_SENDER_EMAIL_PASS', 'Sender email password', '3', 'myyjwzttpgowxhni');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('CREDENTIALS_SENDING_PROCESS', 'Send credentials via SMS/EMAIL/BOTH', '2', 'EMAIL');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('DEFAULT_AUTHENTICATION_TYPE', 'Default login method : SMS/EMAIL/BOTH', '1', 'EMAIL');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('DOB_VERIFICATION_MENDATORY_AT_FORGET_PASSWORD', 'Require DOB at password reset', '2', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('DOB_VERIFICATION_MENDATORY_AT_FORGET_USERID', 'Require DOB at user ID recovery', '2', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('EMAIL_USER_FORGET_PASSWORD_BODY', 'Email body for forgot password', '1', '<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Credentials Changed</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border: 1px solid #dddddd;">
+    <p>Dear <strong>_userId_</strong>,</p>
+
+    <p>Thank you for using <strong>ClickNet</strong>.</p>
+
+    <p>You have successfully changed your credentials.</p>
+
+    <h3>New Credentials</h3>
+    <p>
+      <span style="font-size: 18px; font-weight: bold; color: #007BFF;">User ID:</span>
+      <span style="font-size: 18px; font-weight: bold; color: #007BFF;">_userId_</span><br>
+
+      <span style="font-size: 18px; font-weight: bold; color: #28a745;">Password:</span>
+      <span style="font-size: 18px; font-weight: bold; color: #28a745;">_password_</span>
+    </p>
+
+    <p>For any support or assistance, feel free to contact our helpdesk.</p>
+
+    <p>Regards,<br>
+    <strong>ClickNet Service</strong></p>
+  </div>
+</body>
+</html>
+');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('EMAIL_USER_FORGET_USERID_BODY', 'Email body for forgot user ID', '1', '
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Credentials</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+  <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border: 1px solid #dddddd;">
+    <p>Dear <strong>_userId_</strong>,</p>
+
+    <p>Thank you for using <strong>ClickNet</strong>.</p>
+
+    <h3>Your Credentials</h3>
+    <p>
+      <span style="font-size: 18px; font-weight: bold; color: #007BFF;">User ID:</span>
+      <span style="font-size: 18px; font-weight: bold; color: #007BFF;">_userId_</span><br>
+
+    <p>For any support or assistance, feel free to contact our helpdesk.</p>
+
+    <p>Regards,<br>
+    <strong>ClickNet Service</strong></p>
+  </div>
+</body>
+</html>
+');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('EMAIL_USER_SIGNUP_BODY', 'Email body for signup', '1', '
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Account Created</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+  <div style="max-width: 600px; margin: auto; background-color: #fff; padding: 20px; border: 1px solid #ddd;">
+    <p>Dear <strong>_userId_</strong>,</p>
+
+    <p>Thank you for registering with <strong>ClickNet</strong>.</p>
+
+    <p>Your account has been successfully created. Please find your login credentials:</p>
+
+    <h3>Account Credentials</h3>
+    <p>
+      <span style="font-size: 18px; font-weight: bold; color: #007BFF;">User ID:</span>
+      <span style="font-size: 18px; font-weight: bold; color: #007BFF;">_userId_</span><br />
+
+      <span style="font-size: 18px; font-weight: bold; color: #28a745;">Password:</span>
+      <span style="font-size: 18px; font-weight: bold; color: #28a745;">_password_</span>
+    </p>
+
+    <p><em>Note: Please change your password immediately after your first login for security purposes.</em></p>
+
+    <p>For any support or assistance, feel free to contact our helpdesk.</p>
+
+    <p>Regards,<br />
+      <strong>ClickNet Service</strong></p>
+  </div>
+</body>
+</html>
+');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('EMAIL_VERIFICATION_BODY', 'Email body for OTP', '1', '<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>OTP Verification</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+  <div style="max-width: 600px; margin: auto; background-color: #fff; padding: 20px; border: 1px solid #ddd;">
+
+    <p>Thank you for using <strong>ClickNet</strong>.</p>
+
+    <p>
+      <span style="font-size: 18px; font-weight: bold; color: #28a745;">OTP:</span>
+      <span style="font-size: 18px; font-weight: bold; color: #28a745;">_code_</span>
+    </p>
+
+    <p>Please enter this code in the application to verify your identity. This code will expire in <strong>5 minutes</strong>.</p>
+    <p>If you did not request this, please ignore this email or contact our support team immediately.</p>
+
+    <p>Regards,<br />
+      <strong>ClickNet Service</strong></p>
+  </div>
+</body>
+</html>');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('ENABLE_LICENCE_CHECKING', 'Enable or disable license validation', '2', 'False');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('ENCRYPTION_FIXED_KEY', 'Fixed key for encryption', '3', 'OIPDJFS654OISÖGJDFLXZDNVC654DSFLK65A4ADSLK564SADLJKFFNHN564BJKDF');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('FORGET_PASSWORD_FAILED_ATTEMPTS_LIMIT', 'Limit for forget password attempts', '1', '3');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('FORGET_USERID_FAILED_ATTEMPTS_LIMIT', 'Limit for forget user ID attempts', '1', '3');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('IS_ENABLE_LOG_INSERT', 'Enable DB logging', '1', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('JWT_SECRET_KEY', 'JWT signing key', '3', '#$GJHFGJHF£@LJKHOBJK€56445#JKHJK15454$£JSKSK');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('LOGIN_AFTER_OTP_VERIFICATION', 'Enforce OTP verification before login', '2', 'False');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('LOGIN_WRONG_PASSWORD_ATTEMPT_LIMIT', 'Max wrong attempts before lock', '1', '5');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('MOBILE_MENDATORY_AT_FORGET_PASSWORD', 'Require mobile for password reset', '2', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('MOBILE_MENDATORY_AT_FORGET_USERID', 'Require mobile at user ID recovery', '2', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('NOTIFICATIONS_SENDING_PROCESS', 'Enable background notifications : SMS/EMAIL/BOTH', '2', 'EMAIL');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('OTP_EXPIRY_MINUTES', 'OTP expiry in minutes', '1', '5');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('OTP_LENGTH', 'OTP length', '1', '6');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('OTP_TYPE', 'OTP type (NUMERIC/ALPHA_NUMARIC/NON_ALPHA_NUMARIC/)', '1', 'NUMERIC');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_EXPIRY_DAYS', 'Password will be Expired after N Days', '1', '30');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_POLICY_MAX_PASSWORD_LENGTH', 'Max password length', '1', '16');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_POLICY_MAX_SAME_PASSWORD_REUSE_COUNT', 'Max reused password count', '1', '5');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_POLICY_MIN_ALPHA_NUMERIC_CHAR_COUNT', 'Min alphanumeric count', '1', '6');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_POLICY_MIN_CAPITAL_CHAR_COUNT', 'Min capital letters', '1', '1');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_POLICY_MIN_NON_ALPHA_NUMERIC_CHAR_COUNT', 'Min special characters in password', '1', '1');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_POLICY_MIN_NUMBER_COUNT', 'Min digits', '1', '1');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_POLICY_MIN_PASSWORD_LENGTH', 'Min password length', '1', '8');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_POLICY_MIN_SMALL_CHAR_COUNT', 'Min small letters', '1', '1');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_POLICY_SAME_PASSWORD_REPEAT_ALLOWED_AFTER_DAYS', 'Repeat password after N days', '1', '30');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('PASSWORD_POLICY_SUCCESSIVE_SAME_CHAR_ALLOEWD_COUNT', 'Max successive characters allowed', '1', '3');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('RESTRICT_SAME_MOBILE_NO_AT_SIGNUP', 'Restrict duplicate mobile at signup', '1', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('RESTRICT_SPECIAL_CHARACTERS_FOR_PASSWORD', 'Allow/disallow special characters', '1', '$-----#-----€');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('SMS_USER_FORGET_PASSWORD_BODY', 'SMS body for forgot password', '1', 'Dear *_userId_*,
+
+Thank you for using ClickNet.
+
+Your credentials have been changed successfully.
+Your new login credentials:
+User ID: *_userId_*
+Password: *_password_*
+
+Note: Please change your password immediately after your first login for security.
+
+For support, contact our helpdesk.
+
+Regards,
+ClickNet Service');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('SMS_USER_FORGET_USERID_BODY', 'SMS body for forgot user ID', '1', 'Dear *_userId_*,
+
+Thank you for using ClickNet.
+
+Your credentials:
+User ID: *_userId_*
+
+Note: Please change your password immediately after your first login for security.
+
+For support, contact our helpdesk.
+
+Regards,
+ClickNet Service');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('SMS_USER_SIGNUP_BODY', 'SMS body for signup', '1', 'Dear *_userId_*,
+
+Thank you for registering with ClickNet.
+
+Your account has been created successfully.
+Your login credentials:
+User ID: *_userId_*
+Password: *_password_*
+
+Note: Please change your password immediately after your first login for security.
+
+For support, contact our helpdesk.
+
+Regards,
+ClickNet Service');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('SMS_VERIFICATION_BODY', 'SMS body for OTP', '1', 'Your ClickNet verification code is _code_');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('SYSTEM_DOWN', 'System maintenance mode toggle', '1', 'False');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('SYSTEM_DOWN_MSG', 'System maintenance message', '1', 'System is under maintenance.');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('TAXID_MENDATORY_AT_FORGET_PASSWORD', 'Require Tax ID at password reset', '2', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('TAXID_MENDATORY_AT_FORGET_USERID', 'Require Tax ID at user ID recovery', '2', 'True');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('TWILIO_ACCOUNT_SID', 'Twilio account SID', '3', 'AC03577a184cd16de28abdc11e18f22b7f');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('TWILIO_AUTH_TOKEN', 'Twilio auth token', '3', '8fbf030af3f4a862af502f07412125cc');
+INSERT INTO clicknet.app_settings (`KEY`, DESCRIPTION, PRIVACYLEVEL, VALUE) VALUES ('TWILIO_MOBILE_NUMBER', 'Twilio sender number', '3', '+14155238886');
+

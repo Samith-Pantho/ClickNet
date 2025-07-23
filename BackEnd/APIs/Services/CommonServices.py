@@ -7,7 +7,7 @@ import random
 import string
 import smtplib
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from Crypto.Random import get_random_bytes
@@ -15,7 +15,7 @@ from sqlalchemy import and_, desc, func, select
 from twilio.rest import Client
 from email.mime.text import MIMEText
 from Models.shared import customerSession
-from Schemas.shared import SystemLogErrorSchema, NotificationViewModelSchema, CustomoerSessionSchema
+from Schemas.shared import SystemLogErrorSchema, NotificationViewModelSchema, CustomoerSessionSchema, CustomerUserProfileSchema, StatusResult
 from Config.dbConnection import engine 
 from .LogServices import AddLogOrError
 from .AppSettingsServices import FetchAppSettingsByKey
@@ -25,6 +25,7 @@ g_fixed_key = FetchAppSettingsByKey("ENCRYPTION_FIXED_KEY")
 twilio_account_sid = FetchAppSettingsByKey("TWILIO_ACCOUNT_SID")
 twilio_auth_token = FetchAppSettingsByKey("TWILIO_AUTH_TOKEN")
 twilio_mobile_number = FetchAppSettingsByKey("TWILIO_MOBILE_NUMBER")
+SendMethod = FetchAppSettingsByKey("CREDENTIALS_SENDING_PROCESS").upper()
 
 def LoadJsonFromFile(key: str) -> Any:
     try:
@@ -290,3 +291,78 @@ def GetCurrentActiveSession(user_id:str) -> CustomoerSessionSchema :
             CreatedBy = ""
         ))
         return None
+    
+async def SendCredentials(data:CustomerUserProfileSchema, type:str, new_password:Optional[str]) -> StatusResult:
+    status = StatusResult()
+    try:
+        is_credential_sent = False
+
+        if not type:
+            raise ValueError("Missing criteria for sending credentials.")
+        
+        registered_email = GetDecryptedText(data.email_address).strip().lower()
+        registered_mobile = GetDecryptedText(data.mobile_number).strip()
+
+        
+        if SendMethod == "SMS" and registered_mobile:
+            body = FetchAppSettingsByKey(f"SMS_USER_{type.upper()}_BODY")
+            body = body.replace("_userId_", data.user_id.lower())
+            if new_password:
+                body = body.replace("_password_", new_password)
+            #is_credential_sent = await SendSMS(registered_mobile, body)
+        elif SendMethod == "EMAIL" and registered_email:
+            subject = "ClickNet Credentials"
+            body = FetchAppSettingsByKey(f"EMAIL_USER_{type.upper()}_BODY")
+            body = body.replace("_userId_", data.user_id.lower())
+            if new_password:
+                body = body.replace("_password_", new_password)
+            is_credential_sent = await SendEmail(registered_email, subject, body)
+        elif SendMethod == "BOTH":
+            if registered_mobile:
+                body = FetchAppSettingsByKey(f"SMS_USER_{type.upper()}_BODY")
+                body = body.replace("_userId_", data.user_id.lower())
+                if new_password:
+                    body = body.replace("_password_", new_password)
+                #is_credential_sent = await SendSMS(registered_mobile, body)
+            if registered_email:
+                subject = "Credentials changed"
+                body = FetchAppSettingsByKey(f"EMAIL_USER_{type.upper()}_BODY")
+                body = body.replace("_userId_", data.user_id.lower())
+                if new_password:
+                    body = body.replace("_password_", new_password)
+                is_credential_sent = await SendEmail(registered_email, subject, body)
+
+        if is_credential_sent:
+            status.Status = "OK"
+            if SendMethod == "SMS":
+                status.Message = "Credentials are changed successfully. Please Check your SMS for Login Credentials."
+            elif SendMethod == "EMAIL":
+                status.Message = "Credentials are changed successfully. Please Check your Mail for Login Credentials."
+            else:
+                status.Message = "Credentials are changed successfully. Please Check your Mail/SMS for Login Credentials."
+            status.Result = None
+            
+        else:
+            status.Status = "FAILED"
+            if SendMethod == "SMS":
+                status.Message = f"Could not send Credentials to {registered_mobile}" if registered_mobile else "Could not send Credentials"
+            elif SendMethod == "EMAIL":
+                status.Message = f"Could not send Credentials to {registered_email}" if registered_email else "Could not send Credentials"
+            elif SendMethod == "BOTH":
+                if registered_email and registered_mobile:
+                    status.Message = f"Could not send Credentials to {registered_email} or {registered_mobile}"
+                elif registered_mobile:
+                    status.Message = f"Could not send Credentials to {registered_mobile}"
+                elif registered_email:
+                    status.Message = f"Could not send Credentials to {registered_email}"
+                else:
+                    status.Message = "Could not send Credentials"
+            status.Result = None
+    except Exception as ex:
+        AddLogOrError(SystemLogErrorSchema(
+            Msg = str(ex),
+            Type = "ERROR",
+            ModuleName = "CommonServices/SendCredentials",
+            CreatedBy = ""
+        ))
+    return status

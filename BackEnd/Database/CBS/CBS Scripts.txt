@@ -85,127 +85,16 @@ INSERT INTO `cbs_customer_phones`(`id`, `customer_id`, `type`, `number`) VALUES 
 INSERT INTO `cbs_customer_phones`(`id`, `customer_id`, `type`, `number`) VALUES ('2','100000002','primary','+358417434881');
 
 
-INSERT INTO cbs_customer_accounts (
-    account_number, customer_id, product_category, product_type, product_name, status,
-    relationship, branch_code, opened_date, maturity_date, original_balance, current_balance,
-    available_balance, payment_frequency, payment_min_amount, interest_rate, secured, daily_no_of_payments
-)
-VALUES
-('SA100000001', 100000001, 'Deposit', 'Savings', 'Regular Savings', 'Active',
- 'Primary', '001', DATE '2023-01-01', NULL, 15000, 15000, 15000, NULL, NULL, 2.5, 'No', NULL),
-('SA100000002', 100000001, 'Deposit', 'Savings', 'Smart Saver', 'Active',
- 'Primary', '001', DATE '2023-02-01', NULL, 18000, 18000, 18000, NULL, NULL, 2.7, 'No', NULL),
-('SA100000003', 100000001, 'Deposit', 'Savings', 'Senior Savings', 'Active',
- 'Primary', '001', DATE '2023-03-01', NULL, 20000, 20000, 20000, NULL, NULL, 3.0, 'No', NULL),
-('SA100000004', 100000001, 'Deposit', 'Savings', 'Women\'s Savings', 'Active',
- 'Primary', '001', DATE '2023-04-01', NULL, 16000, 16000, 16000, NULL, NULL, 2.8, 'No', NULL),
-('SA100000005', 100000001, 'Deposit', 'Savings', 'Student Savings', 'Active',
- 'Primary', '001', DATE '2023-05-01', NULL, 15500, 15500, 15500, NULL, NULL, 2.0, 'No', NULL),
-('LN100000001', 100000001, 'Loan', 'Personal Loan', 'Home Renovation Loan', 'Active',
- 'Primary', '001', DATE '2022-06-01', DATE '2027-06-01', 500000, 350000, NULL, 'Monthly', 10000, 10.5, 'Yes', 60),
-('LN100000002', 100000001, 'Loan', 'Auto Loan', 'Car Loan', 'Active',
- 'Primary', '001', DATE '2021-03-01', DATE '2026-03-01', 300000, 120000, NULL, 'Monthly', 7500, 9.0, 'Yes', 60),
-('DPS100000001', 100000001, 'Deposit', 'DPS', 'Monthly DPS Plan', 'Active',
- 'Primary', '001', DATE '2023-07-01', DATE '2028-07-01', 60000, 12000, 12000, 'Monthly', 1000, 5.0, 'No', 60);
+INSERT INTO `cbs_customer_accounts` (`account_number`, `customer_id`, `product_category`, `product_type`, `product_name`, `status`, `relationship`, `branch_code`, `opened_date`, `maturity_date`, `original_balance`, `current_balance`, `available_balance`, `payment_frequency`, `payment_min_amount`, `interest_rate`, `secured`, `daily_no_of_payments`, `payment_max_amount`) VALUES
+('DPS100000001', '100000001', 'Deposit', 'DPS', 'Monthly DPS Plan', 'Active', 'Primary', '001', '2023-07-01', '2028-07-01', 60000, 12000, 12000, 'M', 100, 5.00, 0, 10, 1000),
+('LN100000001', '100000001', 'Loan', 'Personal Loan', 'Home Renovation Loan', 'Active', 'Primary', '001', '2022-06-01', '2027-06-01', 500000, 350000, NULL, 'M', 1000, 10.50, 1, 10, 10000),
+('LN100000002', '100000001', 'Loan', 'Auto Loan', 'Car Loan', 'Active', 'Primary', '001', '2021-03-01', '2026-03-01', 300000, 120000, NULL, 'M', 750, 9.00, 1, 10, 7500),
+('SA100000001', '100000001', 'Deposit', 'Savings', 'Regular Savings', 'Active', 'Primary', '001', '2023-01-01', NULL, 15000, 15000, 15000, 'D', 10, 2.50, 0, 20, 10000),
+('SA100000002', '100000001', 'Deposit', 'Savings', 'Smart Saver', 'Active', 'Primary', '001', '2023-02-01', NULL, 18000, 18000, 18000, 'D', 10, 2.70, 0, 20, 10000),
+('SA100000003', '100000001', 'Deposit', 'Savings', 'Senior Savings', 'Active', 'Primary', '001', '2023-03-01', NULL, 20000, 20000, 20000, 'D', 10, 3.00, 0, 20, 10000),
+('SA100000004', '100000001', 'Deposit', 'Savings', 'Women\'s Savings', 'Active', 'Primary', '001', '2023-04-01', NULL, 16000, 16000, 16000, 'D', 10, 2.80, 0, 20, 10000),
+('SA100000005', '100000001', 'Deposit', 'Savings', 'Student Savings', 'Active', 'Primary', '001', '2023-05-01', NULL, 15500, 15500, 15500, 'D', 10, 2.00, 0, 20, 10000),
+('SA100000006', '100000002', 'Deposit', 'Savings', 'Regular Savings', 'Active', 'Primary', '002', '2023-01-15', NULL, 6000, 6000, 6000, 'D', 10, 2.50, 0, 20, 10000),
+('SA100000007', '100000002', 'Deposit', 'Savings', 'Smart Saver', 'Active', 'Primary', '002', '2023-02-15', NULL, 7500, 7500, 7500, 'D', 10, 2.80, 0, 20, 10000);
+
  
- INSERT INTO cbs_customer_accounts (
-    account_number, customer_id, product_category, product_type, product_name, status,
-    relationship, branch_code, opened_date, maturity_date, original_balance, current_balance,
-    available_balance, payment_frequency, payment_min_amount, interest_rate, secured, daily_no_of_payments
-)
-VALUES
-('SA100000006', 100000002, 'Deposit', 'Savings', 'Regular Savings', 'Active',
- 'Primary', '002', DATE '2023-01-15', NULL, 6000, 6000, 6000, NULL, NULL, 2.5, 'No', NULL),
-('SA100000007', 100000002, 'Deposit', 'Savings', 'Smart Saver', 'Active',
- 'Primary', '002', DATE '2023-02-15', NULL, 7500, 7500, 7500, NULL, NULL, 2.8, 'No', NULL);
- 
- 
- -- 1. Fetch customer info by customer_id
-DELIMITER //
-CREATE PROCEDURE CBS_GetCustomerInfo(IN p_customer_id VARCHAR(20))
-BEGIN
-    SELECT * FROM cbs_customers
-    WHERE customer_id = p_customer_id;
-END;
-//
-
--- 2. Fetch customer addresses by customer_id
-CREATE PROCEDURE CBS_GetCustomerAddresses(IN p_customer_id VARCHAR(20))
-BEGIN
-    SELECT * FROM cbs_customer_addresses
-    WHERE customer_id = p_customer_id;
-END;
-//
-
--- 3. Fetch customer emails by customer_id
-CREATE PROCEDURE CBS_GetCustomerEmails(IN p_customer_id VARCHAR(20))
-BEGIN
-    SELECT * FROM cbs_customer_emails
-    WHERE customer_id = p_customer_id;
-END;
-//
-
--- 4. Fetch customer phones by customer_id
-CREATE PROCEDURE CBS_GetCustomerPhones(IN p_customer_id VARCHAR(20))
-BEGIN
-    SELECT * FROM cbs_customer_phones
-    WHERE customer_id = p_customer_id;
-END;
-//
-
--- 5. Fetch customer accounts by customer_id and product_category
-CREATE PROCEDURE CBS_GetCustomerAccounts(
-    IN p_customer_id VARCHAR(20),
-    IN p_product_category VARCHAR(20)
-)
-BEGIN
-    IF p_product_category = '' OR p_product_category IS NULL THEN
-        SELECT * FROM cbs_customer_accounts
-        WHERE customer_id = p_customer_id;
-    ELSEIF p_product_category = 'Deposit' THEN
-        SELECT * FROM cbs_customer_accounts
-        WHERE customer_id = p_customer_id
-          AND UPPER(product_category) IN ('DEPOSIT');
-    ELSEIF p_product_category = 'Loan' THEN
-        SELECT * FROM cbs_customer_accounts
-        WHERE customer_id = p_customer_id
-          AND UPPER(product_category) IN ('LOAN');
-    END IF;
-END;
-//
-
--- 6. Fetch full account information by account_number
-CREATE PROCEDURE CBS_GetAccountInfo(IN p_account_number VARCHAR(20))
-BEGIN
-    SELECT * FROM cbs_customer_accounts
-    WHERE account_number = p_account_number;
-END;
-//
-
--- 7. Fetch balances and interest rate by account_number
-CREATE PROCEDURE CBS_GetAccountBalancesAndRate(IN p_account_number VARCHAR(20))
-BEGIN
-    SELECT original_balance, current_balance, available_balance, interest_rate
-    FROM cbs_customer_accounts
-    WHERE account_number = p_account_number;
-END;
-//
-
--- 8. Fetch only available balance
-CREATE PROCEDURE CBS_GetAvailableBalance(IN p_account_number VARCHAR(20))
-BEGIN
-    SELECT available_balance
-    FROM cbs_customer_accounts
-    WHERE account_number = p_account_number;
-END;
-//
-
--- 9. Fetch payment frequency and limits
-CREATE PROCEDURE CBS_GetPaymentInfo(IN p_account_number VARCHAR(20))
-BEGIN
-    SELECT payment_frequency, payment_min_amount, payment_max_amount, daily_no_of_payments
-    FROM cbs_customer_accounts
-    WHERE account_number = p_account_number;
-END;
-//
-DELIMITER ;

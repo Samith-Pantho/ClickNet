@@ -1,0 +1,132 @@
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CBS_GetAccountBalancesAndRate(IN p_account_number VARCHAR(20))
+BEGIN
+    SELECT original_balance, current_balance, available_balance, interest_rate
+    FROM cbs_customer_accounts
+    WHERE account_number = p_account_number;
+END $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CBS_GetAccountInfo(IN p_account_number VARCHAR(20))
+BEGIN
+    SELECT 
+        account_number,
+        product_category,
+        product_type,
+        product_name,
+        status,
+        relationship,
+        branch_code,
+        opened_date,
+        maturity_date
+    FROM cbs_customer_accounts
+    WHERE account_number = p_account_number;
+END $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CBS_GetAccountWiseTransLimitInfo(IN p_account_number VARCHAR(20))
+BEGIN
+    SELECT payment_frequency, payment_min_amount, payment_max_amount, daily_no_of_payments
+    FROM cbs_customer_accounts
+    WHERE account_number = p_account_number;
+END $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CBS_GetAvailableBalance(IN p_account_number VARCHAR(20))
+BEGIN
+    SELECT available_balance
+    FROM cbs_customer_accounts
+    WHERE account_number = p_account_number;
+END $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CBS_GetCustomerAccounts(IN p_customer_id VARCHAR(20), IN p_product_category VARCHAR(20))
+BEGIN
+    IF p_product_category IS NULL OR TRIM(p_product_category) = '' THEN
+        SELECT account_number,
+               branch_code,
+               product_category,
+               product_type,
+               product_name
+        FROM cbs_customer_accounts
+        WHERE customer_id = p_customer_id;
+    ELSE
+        SELECT account_number,
+               branch_code,
+               product_category,
+               product_type,
+               product_name
+        FROM cbs_customer_accounts
+        WHERE customer_id = p_customer_id
+          AND UPPER(product_category) = UPPER(p_product_category);
+    END IF;
+END $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CBS_GetCustomerAccountsWithDetails(IN p_customer_id VARCHAR(20), IN p_product_category VARCHAR(20))
+BEGIN
+    IF p_product_category IS NULL OR TRIM(p_product_category) = '' THEN
+        SELECT *
+        FROM cbs_customer_accounts
+        WHERE customer_id = p_customer_id;
+    ELSE
+        SELECT *
+        FROM cbs_customer_accounts
+        WHERE customer_id = p_customer_id
+          AND UPPER(product_category) = UPPER(p_product_category);
+    END IF;
+END $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CBS_GetCustomerAddresses(IN p_customer_id VARCHAR(20))
+BEGIN
+    SELECT * FROM cbs_customer_addresses
+    WHERE customer_id = p_customer_id;
+END $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CBS_GetCustomerEmails(IN p_customer_id VARCHAR(20))
+BEGIN
+    SELECT * FROM cbs_customer_emails
+    WHERE customer_id = p_customer_id;
+END $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CBS_GetCustomerInfo(IN p_customer_id VARCHAR(20))
+BEGIN
+    SELECT * FROM cbs_customers
+    WHERE customer_id = p_customer_id;
+END $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CBS_GetCustomerPhones(IN p_customer_id VARCHAR(20))
+BEGIN
+    SELECT * FROM cbs_customer_phones
+    WHERE customer_id = p_customer_id;
+END $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE CLICKNET_GetPendingOTP(
+    IN p_user_id VARCHAR(25), 
+    IN p_cust_id VARCHAR(20),
+    IN p_from_acct VARCHAR(500), 
+    IN p_from_branch VARCHAR(6),
+    IN p_to_acct VARCHAR(500), 
+    IN p_to_branch VARCHAR(12),
+    IN p_to_bank_id VARCHAR(6),
+    IN p_to_routing_numb VARCHAR(9),
+    IN p_amount_ccy DECIMAL(17,4),
+    IN p_amount_lcy DECIMAL(17,4), 
+    IN p_cutoff_time DATETIME)
+BEGIN
+    SELECT *
+    FROM CUSTOMER_OTP
+    WHERE LOWER(TRIM(USER_ID)) = LOWER(TRIM(p_user_id))
+      AND CUST_ID = p_cust_id
+      AND FROM_ACCOUNT_NO = p_from_acct
+      AND FROM_BRANCH_ID = p_from_branch
+      AND TO_ACCOUNT_NO = p_to_acct
+      AND TO_BRANCH_ID = p_to_branch
+      AND TO_BANK_ID = p_to_bank_id
+      AND TO_ROUTING_NUMB = p_to_routing_numb
+      AND ROUND(AMOUNT_CCY, 4) = ROUND(p_amount_ccy, 4)
+      AND ROUND(AMOUNT_LCY, 4) = ROUND(p_amount_lcy, 4)
+      AND OTP_VERIFIED_AT IS NULL
+      AND TRIM(UPPER(REMARKS)) = 'PENDING'
+      AND DB_SVR_DT >= p_cutoff_time
+    ORDER BY OTP_SL DESC
+    LIMIT 1;
+END $$
+
+DELIMITER ;
