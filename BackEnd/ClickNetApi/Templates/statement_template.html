@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Account Statement</title>
+    <style>
+        @page {
+            margin: 40px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+            background: url("assets/background.png") no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: -1;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .title-block {
+            flex-grow: 1;
+            text-align: right;
+        }
+
+        .title-block h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #0077cc;
+        }
+
+        .title-block h2 {
+            margin: 0;
+            font-size: 16px;
+            color: #444;
+        }
+
+        .logo-block {
+            text-align: left;
+        }
+
+        .logo-block img {
+            max-height: 60px;
+            opacity: 0.75;
+        }
+
+        .account-summary {
+            background-color: #e9f5ffcc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            row-gap: 8px;
+        }
+
+        .summary-grid div {
+            padding: 4px 0;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #444;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 13px;
+            background-color: #fff;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #0077cc;
+            color: white;
+        }
+
+        tfoot td {
+            font-weight: bold;
+            background-color: #eaf2f8;
+        }
+
+        .footer {
+            font-size: 10px;
+            margin-top: 40px;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="logo-block">
+            <img src="assets/logo.png" alt="Bank Logo" />
+        </div>
+        <div class="title-block">
+            <h1>ClickNet</h1>
+            <h2>Account Statement</h2>
+        </div>
+    </div>
+
+    <div class="account-summary">
+        <div class="summary-grid">
+            <div><span class="label">Account Number:</span> {{ account_no }}</div>
+            <div><span class="label">Account Holder:</span> {{ account_holder }}</div>
+            <div><span class="label">Opening Balance:</span> {{ opening_balance }} {{ currency }}</div>
+            <div><span class="label">Current Balance:</span> {{ current_balance }} {{ currency }}</div>
+            <div><span class="label">Currency:</span> {{ currency }}</div>
+            <div><span class="label">Generated On:</span> {{ generated_on }}</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Narration</th>
+                <th>Dr Amount</th>
+                <th>Cr Amount</th>
+                <th>Currency</th>
+                <th>Txn ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tx in transactions %}
+            <tr>
+                <td>{{ tx.trans_date }}</td>
+                <td>{{ tx.narration }}</td>
+                <td>{{ tx.dr_amount }}</td>
+                <td>{{ tx.cr_amount }}</td>
+                <td>{{ tx.currency }}</td>
+                <td>{{ tx.trans_id }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td></td>
+                <td>Total</td>
+                <td>{{ total_dr }}</td>
+                <td>{{ total_cr }}</td>
+                <td colspan="2"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="footer">
+        © {{ generated_on[:4] }} ClickNet Services. All rights reserved.
+    </div>
+</body>
+</html>

@@ -1,0 +1,306 @@
+version: '3.8'
+
+networks:
+  public_network:
+    driver: bridge
+  internal_network:
+    driver: bridge
+    internal: true
+
+
+services:
+  clicknetweb:
+    build:
+      context: ./FrontEnd/clicknetweb
+      dockerfile: Dockerfile
+    ports:
+      - "3333:80"
+    networks:
+      - public_network
+      - internal_network
+    depends_on:
+      - api
+    environment:
+      - REACT_APP_API_URL=http://api:8443
+      - REACT_APP_WS_URL=api:8443
+      - REACT_APP_ENVIRONMENT=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  clickkycweb:
+    build:
+      context: ./FrontEnd/clickkycweb
+      dockerfile: Dockerfile
+    ports:
+      - "2222:80"
+    networks:
+      - public_network
+      - internal_network
+    depends_on:
+      - api
+    environment:
+      - REACT_APP_KYC_URL=http://kyc:8444
+      - REACT_APP_ENVIRONMENT=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  api:
+    build:
+      context: ./BackEnd/ClickNetApi
+      dockerfile: Dockerfile
+    networks:
+      - internal_network
+    environment:
+      - ENVIRONMENT=production
+      - DB_CBS_HOST=mysql-cbs
+      - DB_CLICKNET_HOST=mysql-clicknet
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - PYTHONPATH=/app
+      - DB_CBS_USER=cbs_user
+      - DB_CBS_PASSWORD=cbs_password
+      - DB_CBS_NAME=cbs_db
+      - DB_CLICKNET_USER=clicknet_user
+      - DB_CLICKNET_PASSWORD=clicknet_password
+      - DB_CLICKNET_NAME=clicknet_db
+      - APIWEBHOOK_URL=http://apiwebhook:9999
+    depends_on:
+      mysql-cbs:
+        condition: service_healthy
+      mysql-clicknet:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    volumes:
+      - ./BackEnd:/app/BackEnd
+      - ./logs:/app/logs
+        
+  apiwebhook:
+    build:
+      context: ./BackEnd/ClickNetWebhook
+      dockerfile: Dockerfile
+    ports:
+      - "9999:9999"
+    networks:
+      - public_network
+      - internal_network
+    environment:
+      - ENVIRONMENT=production
+      - DB_CBS_HOST=mysql-cbs
+      - DB_CLICKNET_HOST=mysql-clicknet
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - PYTHONPATH=/app
+      - DB_CBS_USER=cbs_user
+      - DB_CBS_PASSWORD=cbs_password
+      - DB_CBS_NAME=cbs_db
+      - DB_CLICKNET_USER=clicknet_user
+      - DB_CLICKNET_PASSWORD=clicknet_password
+      - DB_CLICKNET_NAME=clicknet_db
+    depends_on:
+      mysql-cbs:
+        condition: service_healthy
+      mysql-clicknet:
+        condition: service_healthy
+    volumes:
+      - ./BackEnd:/app/BackEnd
+      - ./logs:/app/logs    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9999/health"]  
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+      
+  kyc:
+    build:
+      context: ./BackEnd/ClickKYCApi
+      dockerfile: Dockerfile
+    networks:
+      - internal_network
+    environment:
+      - ENVIRONMENT=production
+      - DB_CBS_HOST=mysql-cbs
+      - DB_CLICKKYC_HOST=mysql-clickkyc
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - PYTHONPATH=/app
+      - DB_CBS_USER=cbs_user
+      - DB_CBS_PASSWORD=cbs_password
+      - DB_CBS_NAME=cbs_db
+      - DB_CLICKKYC_USER=clickkyc_user
+      - DB_CLICKKYC_PASSWORD=clickkyc_password
+      - DB_CLICKKYC_NAME=clickkyc_db
+      - KYCWEBHOOK_URL=http://kycwebhook:8888
+    depends_on:
+      mysql-cbs:
+        condition: service_healthy
+      mysql-clickkyc:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    volumes:
+      - ./BackEnd:/app/BackEnd
+      - ./logs:/app/logs
+      - customer_photos:/app/CustomerPhotos
+      
+  kycwebhook:
+    build:
+      context: ./BackEnd/ClickKYCWebhook
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    networks:
+      - public_network
+      - internal_network
+    environment:
+      - ENVIRONMENT=production
+      - DB_CLICKKYC_HOST=mysql-clickkyc
+      - PYTHONPATH=/app
+      - DB_CLICKKYC_USER=clickkyc_user
+      - DB_CLICKKYC_PASSWORD=clickkyc_password
+      - DB_CLICKKYC_NAME=clickkyc_db
+    depends_on:
+      mysql-clickkyc:
+        condition: service_healthy
+    volumes:
+      - ./BackEnd:/app/BackEnd
+      - ./logs:/app/logs
+      - customer_photos:/app/CustomerPhotos
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/health"]  
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+    networks:
+      - internal_network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      - zookeeper
+    networks:
+      - internal_network
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  mysql-cbs:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: cbs_db
+      MYSQL_USER: cbs_user
+      MYSQL_PASSWORD: cbs_password
+    ports:
+      - "3306:3306"
+    networks:
+      - internal_network
+    volumes:
+      - mysql-cbs-data:/var/lib/mysql
+      - ./Database/CBS:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  mysql-clicknet:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: clicknet_db
+      MYSQL_USER: clicknet_user
+      MYSQL_PASSWORD: clicknet_password
+    ports:
+      - "3307:3306"
+    networks:
+      - internal_network
+    volumes:
+      - mysql-clicknet-data:/var/lib/mysql
+      - ./Database/ClickNet:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+   
+  mysql-clickkyc:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: clickkyc_db
+      MYSQL_USER: clickkyc_user
+      MYSQL_PASSWORD: clickkyc_password
+    ports:
+      - "3308:3306"
+    networks:
+      - internal_network
+    volumes:
+      - mysql-clickkyc-data:/var/lib/mysql
+      - ./Database/ClickKyc:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      
+  ngrok_net:
+    image: ngrok/ngrok:latest
+    command: start --all --config=/etc/ngrok/ngrok_net.yml
+    volumes:
+      - ./ngrok_net.yml:/etc/ngrok/ngrok_net.yml
+    environment:
+      - NGROK_AUTHTOKEN=30vm4TLhunr6FDVSdUCCgqhtBJa_3hWKe66uuYcschTKLUWzr
+    ports:
+      - "4045:4040"
+    networks:
+      - public_network
+    depends_on:
+      clicknetweb:
+        condition: service_healthy
+      apiwebhook:
+        condition: service_healthy
+
+  ngrok_kyc:
+    image: ngrok/ngrok:latest
+    command: start --all --config=/etc/ngrok/ngrok_kyc.yml
+    volumes:
+      - ./ngrok_kyc.yml:/etc/ngrok/ngrok_kyc.yml
+    environment:
+      - NGROK_AUTHTOKEN=31JzB9CFM5qzUKVK82Nioxm30lv_2XvhsKJZ9fDXw3sr8fedo
+    ports:
+      - "4050:4040"
+    networks:
+      - public_network
+    depends_on:
+      clickkycweb:
+        condition: service_healthy
+      kycwebhook:
+        condition: service_healthy
+
+volumes:
+  mysql-cbs-data:
+  mysql-clicknet-data:
+  mysql-clickkyc-data:
+  customer_photos:

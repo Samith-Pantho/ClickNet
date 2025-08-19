@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS SYSTEM_ADVERTISEMENTS
+(
+    SL         INT AUTO_INCREMENT PRIMARY KEY,
+    TITLE      VARCHAR(100)  NULL,
+    IMAGE_URL  VARCHAR(100)  NULL,
+    TARGET_URL VARCHAR(1000) NULL,
+    STATUS     TINYINT(1)    NULL
+);
+
+
+INSERT INTO SYSTEM_ADVERTISEMENTS (TITLE, IMAGE_URL, TARGET_URL, STATUS)
+VALUES (
+    'Refer a friend',
+    'https://i.postimg.cc/q7JYxNdr/istockphoto-1156197725-612x612.jpg',
+    'http://localhost:3000/banking',
+    1
+);

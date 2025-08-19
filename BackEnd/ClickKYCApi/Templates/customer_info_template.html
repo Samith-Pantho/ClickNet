@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Customer Profile</title>
+    <style>
+        @page {
+            margin: 40px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+            background: url("assets/background.png") no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: -1;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .title-block {
+            flex-grow: 1;
+            text-align: right;
+        }
+
+        .title-block h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #0077cc;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .title-block h2 {
+            margin: 5px 0 0;
+            font-size: 16px;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .logo-block {
+            text-align: left;
+        }
+
+        .logo-block img {
+            max-height: 70px;
+        }
+
+        .photo-section {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+
+        .portrait-photo-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            width: 180px;
+        }
+
+        .nid-photo-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            width: 285px; 
+        }
+
+        .photo-card h3 {
+            margin: 0 0 10px;
+            color: #0077cc;
+            font-size: 16px;
+        }
+
+        .portrait-placeholder {
+            width: 150px;
+            height: 200px;
+            background-color: #f5f5f5;
+            border: 1px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+            margin: 0 auto;
+        }
+
+        .nid-placeholder {
+            width: 255px;
+            height: 160px;
+            background-color: #f5f5f5;
+            border: 1px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+            margin: 0 auto;
+        }
+
+        .portrait-placeholder img,
+        .nid-placeholder img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;   
+			object-position: center; 
+			display: block;
+        }
+
+        .details-section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            color: #0077cc;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin: 25px 0 15px;
+            font-size: 20px;
+        }
+
+        .info-grid {
+            gap: 15px 30px;
+        }
+
+        .info-item {
+            display: flex;
+            min-height: 25px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #555;
+            min-width: 160px;
+        }
+
+        .value {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .verified-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .footer {
+            font-size: 10px;
+            margin-top: 40px;
+            color: #777;
+            text-align: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="logo-block">
+            <img src="assets/logo.png" alt="Company Logo" />
+        </div>
+        <div class="title-block">
+            <h1>Customer Profile</h1>
+            <h2>Detailed Information & Verification Documents</h2>
+        </div>
+    </div>
+
+    <!-- All Details -->
+    <div class="details-section">
+        <h2 class="section-title">Personal Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="label">Full Name:</span>
+                <span class="value">{{ name }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">First Name:</span>
+                <span class="value">{{ first_name }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Last Name:</span>
+                <span class="value">{{ last_name }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Date of Birth:</span>
+                <span class="value">{{ birth_date }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Customer ID:</span>
+                <span class="value" style="color: blue;">{{ customer_id }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Account Number:</span>
+                <span class="value" style="color: green;">{{ account_no }}</span>
+            </div>
+        </div>
+
+        <h2 class="section-title">ID Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="label">ID Type:</span>
+                <span class="value">{{ tax_id_type }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">ID Number:</span>
+                <span class="value">{{ tax_id }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Verification Status:</span>
+                <span class="value">
+                    {% if is_tax_id_verified %}
+                        Verified <span class="verified-badge">✓</span>
+                    {% else %}
+                        Not Verified
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <h2 class="section-title">Address Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="label">Address Type:</span>
+                <span class="value">{{ address_type }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Line 1:</span>
+                <span class="value">{{ line_1 }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Line 2:</span>
+                <span class="value">{{ line_2 }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Line 3:</span>
+                <span class="value">{{ line_3 }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Line 4:</span>
+                <span class="value">{{ line_4 }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">City:</span>
+                <span class="value">{{ city }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">State/Region:</span>
+                <span class="value">{{ state_code }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Postal Code:</span>
+                <span class="value">{{ zipcode }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Country:</span>
+                <span class="value">{{ country_code }}</span>
+            </div>
+        </div>
+    </div>
+	
+    <!-- Photo Section -->
+    <div class="photo-section">
+        <div class="portrait-photo-card">
+            <h3>Portrait Photo</h3>
+            <div class="portrait-placeholder">
+                {% if user_potrate_photo %}
+                    <img src="{{ user_potrate_photo }}" alt="Customer Portrait" />
+                {% else %}
+                    No photo available
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="nid-photo-card">
+            <h3>ID Document (Front)</h3>
+            <div class="nid-placeholder">
+                {% if user_nid_front_photo %}
+                    <img src="{{ user_nid_front_photo }}" alt="ID Document Front" />
+                {% else %}
+                    No document available
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="footer">
+        © {{ generated_on[:4] }} ClickNet Services. All rights reserved. | Generated on: {{ generated_on }}
+    </div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+
+.product-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.product-card {
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.product-card.selected {
+  border-color: var(--primary-color);
+  background: var(--primary-light);
+  animation: pulse 1.5s ease-in-out;
+}
+
+.product-icon-container {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-icon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.card-content {
+  padding: 0 16px 16px;
+}
+
+.product-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: #2d3436;
+}
+
+.product-highlights {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  justify-content: space-between;
+}
+
+.highlight-badge {
+  background: #f8f9fa;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.highlight-icon {
+  color: #4a6bff;
+  font-size: 14px;
+}
+
+.product-description {
+  font-size: 14px;
+  color: #636e72;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.product-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.details-button {
+  background: none;
+  border: none;
+  color: #4a6bff;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.details-button:hover {
+  text-decoration: underline;
+}
+
+/* Animation for selected card */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(74, 107, 255, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(74, 107, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 107, 255, 0); }
+}
+
+.product-type {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.product-type.savings {
+    background-color: #e3f5eb; 
+    color: #2e8b57;       
+    border: 1px solid #c1e5d0; 
+}

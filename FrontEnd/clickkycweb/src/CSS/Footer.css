@@ -1,0 +1,24 @@
+.footer {
+  background-color: var(--dark-color);
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.footer-content {
+  white-space: nowrap;
+  animation: scrollText 20s linear infinite;
+}
+
+.footer-item {
+  display: inline-block;
+  margin: 0 1rem;
+}
+
+@keyframes scrollText {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}

@@ -1,0 +1,8 @@
+version: "2"
+tunnels:
+  clicknet_web:
+    addr: clicknetweb:80
+    proto: http
+  api_webhook:
+    addr: apiwebhook:9999
+    proto: http

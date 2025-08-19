@@ -1,0 +1,157 @@
+.status-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-left: 6px solid;
+}
+
+.status-card.success {
+  border-color: #4CAF50;
+}
+
+.status-card.error {
+  border-color: #F44336;
+}
+
+.status-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-card.success .status-icon {
+  background-color: #E8F5E9;
+  color: #4CAF50;
+}
+
+.status-card.error .status-icon {
+  background-color: #FFEBEE;
+  color: #F44336;
+}
+
+.status-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.status-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.status-message {
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+.api-message {
+  font-style: italic;
+  margin: 0.5rem 0;
+}
+
+.account-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.account-holder {
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+}
+
+.account-detail {
+  margin-bottom: 16px;
+}
+
+.account-detail span {
+  display: flex;
+  color: #7f8c8d;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.detail-row strong {
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+.copy-icon {
+  color: #3498db;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.customer-error {
+  text-align: left;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #FDF0F0;
+  border: 1px solid #FFCDD2;
+}
+
+.error-row {
+  display: flex;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed #E0E0E0;
+}
+
+.error-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.error-label {
+  font-weight: 600;
+  min-width: 120px;
+  color: #555;
+}
+
+.error-label {
+  color: #D32F2F;
+}
+
+.error-value {
+  color: #B71C1C;
+}
+
+.download-btn {
+  margin-top: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-buttons {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}

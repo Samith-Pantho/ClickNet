@@ -1,0 +1,14 @@
+pycryptodome
+requests
+fastapi
+sqlalchemy
+pymysql
+uvicorn
+debugpy
+httpx
+cryptography
+python-dotenv
+asyncmy
+uvicorn[standard]
+slowapi
+pillow

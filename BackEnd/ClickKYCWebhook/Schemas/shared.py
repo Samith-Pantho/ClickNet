@@ -1,0 +1,14 @@
+from .Customer.CustomerRegistrationSchema import CustomerRegistrationSchema
+
+from .System.SystemLogErrorSchema import SystemLogErrorSchema
+
+from .Internal.DiditVerificationViewModelSchema import DiditVerificationViewModelSchema, WarningModel, DistanceModel, LocationModel, DocumentLocationInfo, IPDistanceInfo, LocationsInfoModel, IPAnalysisModel, FaceMatchModel, IDVerificationModel, LivenessModel, DecisionModel
+from .Internal.StatusResult import StatusResult
+
+from .Didit.DiditSessionsSchema import DiditSessionsSchema
+from .Didit.DiditDecisionsSchema import DiditDecisionsSchema
+from .Didit.DiditFaceMatchesSchema import DiditFaceMatchesSchema
+from .Didit.DiditIdVerificationsSchema import DiditIdVerificationsSchema
+from .Didit.DiditIpAnalysesSchema import DiditIpAnalysesSchema
+from .Didit.DiditLivenessSchema import DiditLivenessSchema
+from .Didit.DiditWarningsSchema import DiditWarningsSchema

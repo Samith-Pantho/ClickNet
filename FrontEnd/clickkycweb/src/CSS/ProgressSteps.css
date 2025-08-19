@@ -1,0 +1,129 @@
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 2rem 0;
+  counter-reset: step;
+}
+
+.progress-steps::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--border-color);
+  z-index: 1;
+}
+
+.step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--background-light);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--primary-light);
+}
+
+.step.completed .step-number {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.step.failed .step-number {
+  background: var(--danger-color);
+  border-color: var(--danger-dark);
+  color: white;
+}
+
+.step-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: center;
+  position: relative;
+  padding: 0 0.5rem;
+}
+
+.step.active .step-label {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.step.completed .step-label {
+  color: var(--text-color);
+}
+
+.step.failed .step-label {
+  color: var(--danger-color);
+  font-weight: 500;
+}
+
+.error-message {
+  font-size: 0.8rem;
+  color: var(--danger-color);
+  margin-top: 0.25rem;
+  font-weight: normal;
+}
+
+.checkmark {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.failed-mark {
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: bold;
+}
+
+.step-connector {
+  position: absolute;
+  top: 15px;
+  height: 2px;
+  background: var(--border-color);
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.step-connector.completed {
+  background: var(--primary-color);
+}
+
+/* Adjust connector positioning */
+.step:first-child .step-connector {
+  left: 50%;
+  right: 0;
+}
+
+.step:not(:first-child):not(:last-child) .step-connector {
+  left: 0;
+  right: 0;
+}
+
+.step:last-child .step-connector {
+  left: 0;
+  right: 50%;
+}

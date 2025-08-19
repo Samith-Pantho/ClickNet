@@ -1,0 +1,45 @@
+from sqlalchemy import Table, Column, String, Boolean, DateTime, SmallInteger
+from Config.dbConnection import meta, engine
+
+customerUserProfile = Table(
+    "CUSTOMER_USER_PROFILE", meta,
+    Column("USER_ID", String(50), primary_key=True),
+    Column("USER_NM", String(100)),
+    Column("USER_DESCRIP", String(255)),
+    Column("PASSWORD_STRING", String(100)),
+    Column("FORCE_PASSWORD_CHANGED_FLAG", Boolean),
+    Column("LAST_PASSWORD_CHANGED_ON", DateTime),
+    Column("LAST_SIGNED_ON", DateTime),
+    Column("USER_STATUS_ACTIVE_FLAG", Boolean),
+    Column("USER_STATUS_CHANGED_ON", DateTime),
+    Column("USER_PROFILE_CLOSED_FLAG", Boolean),
+    Column("USER_PROFILE_CLOSED_ON", DateTime),
+    Column("FAILED_LOGIN_ATTEMPTS_NOS", SmallInteger),
+    Column("FAILED_PASWORD_RECOVERY_ATTEMPTS_NOS", SmallInteger),
+    Column("FAILED_USERID_RECOVERY_ATTEMPTS_NOS", SmallInteger),
+    Column("RECENT_ALERT_MSG", String(255)),
+    Column("CUSTOMER_ID", String(50)),
+    Column("HOME_BRANCH_ID", String(20)),
+    Column("USER_ADDRESS", String(255)),
+    Column("EMAIL_ADDRESS", String(2000)),
+    Column("EMAIL_ADDRESS_HASH", String(500)),
+    Column("MOBILE_NUMBER", String(2000)),
+    Column("MOBILE_NUMBER_HASH", String(500)),
+    Column("AUTHENTICATION_TYPE", String(50)),
+    Column("CREATED_BY", String(100)),
+    Column("CREATION_DT", DateTime),
+    Column("LAST_ACTIVATION_BY", String(100)),
+    Column("LAST_ACTIVATION_DT", DateTime),
+    Column("AUTH_1ST_BY", String(100)),
+    Column("AUTH_2ND_BY", String(100)),
+    Column("AUTH_1ST_DT", DateTime),
+    Column("AUTH_2ND_DT", DateTime),
+    Column("AUTH_STATUS_ID", String(10)),
+    Column("LAST_ACTION", String(50)),
+    Column("LOCKED_FLAG", Boolean),
+    Column("LOCKED_BY", String(100)),
+    Column("LOCKED_DT", DateTime),
+    Column("LOCKED_REASON", String(255))
+)
+
+meta.create_all(bind=engine)

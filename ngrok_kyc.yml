@@ -1,0 +1,8 @@
+version: "2"
+tunnels:
+  clickkyc_web:
+    addr: clickkycweb:80
+    proto: http
+  kyc_webhook:
+    addr: kycwebhook:8888
+    proto: http

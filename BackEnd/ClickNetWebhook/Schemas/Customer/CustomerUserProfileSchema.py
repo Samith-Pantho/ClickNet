@@ -1,0 +1,45 @@
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional
+from datetime import datetime
+
+class CustomerUserProfileSchema(BaseModel):
+    user_id: Optional[str] = Field(None, alias="USER_ID")
+    user_nm: Optional[str] = Field(None, alias="USER_NM")
+    user_descrip: Optional[str] = Field(None, alias="USER_DESCRIP")
+    password_string: Optional[str] = Field(None, alias="PASSWORD_STRING")
+    force_password_changed_flag: Optional[bool] = Field(None, alias="FORCE_PASSWORD_CHANGED_FLAG")
+    last_password_changed_on: Optional[datetime] = Field(None, alias="LAST_PASSWORD_CHANGED_ON")
+    last_signed_on: Optional[datetime] = Field(None, alias="LAST_SIGNED_ON")
+    user_status_active_flag: Optional[bool] = Field(None, alias="USER_STATUS_ACTIVE_FLAG")
+    user_status_changed_on: Optional[datetime] = Field(None, alias="USER_STATUS_CHANGED_ON")
+    user_profile_closed_flag: Optional[bool] = Field(None, alias="USER_PROFILE_CLOSED_FLAG")
+    user_profile_closed_on: Optional[datetime] = Field(None, alias="USER_PROFILE_CLOSED_ON")
+    failed_login_attempts_nos: Optional[int] = Field(None, alias="FAILED_LOGIN_ATTEMPTS_NOS")
+    failed_pasword_recovery_attempts_nos: Optional[int] = Field(None, alias="FAILED_PASWORD_RECOVERY_ATTEMPTS_NOS")
+    failed_userid_recovery_attempts_nos: Optional[int] = Field(None, alias="FAILED_USERID_RECOVERY_ATTEMPTS_NOS")
+    recent_alert_msg: Optional[str] = Field(None, alias="RECENT_ALERT_MSG")
+    customer_id: Optional[str] = Field(None, alias="CUSTOMER_ID")
+    home_branch_id: Optional[str] = Field(None, alias="HOME_BRANCH_ID")
+    user_address: Optional[str] = Field(None, alias="USER_ADDRESS")
+    email_address: Optional[str] = Field(None, alias="EMAIL_ADDRESS")
+    email_address_hash: Optional[str] = Field(None, alias="EMAIL_ADDRESS_HASH")
+    mobile_number: Optional[str] = Field(None, alias="MOBILE_NUMBER")
+    mobile_number_hash: Optional[str] = Field(None, alias="MOBILE_NUMBER_HASH")
+    authentication_type: Optional[str] = Field(None, alias="AUTHENTICATION_TYPE")
+    created_by: Optional[str] = Field(None, alias="CREATED_BY")
+    creation_dt: Optional[datetime] = Field(None, alias="CREATION_DT")
+    last_activation_by: Optional[str] = Field(None, alias="LAST_ACTIVATION_BY")
+    last_activation_dt: Optional[datetime] = Field(None, alias="LAST_ACTIVATION_DT")
+    auth_1st_by: Optional[str] = Field(None, alias="AUTH_1ST_BY")
+    auth_2nd_by: Optional[str] = Field(None, alias="AUTH_2ND_BY")
+    auth_1st_dt: Optional[datetime] = Field(None, alias="AUTH_1ST_DT")
+    auth_2nd_dt: Optional[datetime] = Field(None, alias="AUTH_2ND_DT")
+    auth_status_id: Optional[str] = Field(None, alias="AUTH_STATUS_ID")
+    last_action: Optional[str] = Field(None, alias="LAST_ACTION")
+    locked_flag: Optional[bool] = Field(None, alias="LOCKED_FLAG")
+    locked_by: Optional[str] = Field(None, alias="LOCKED_BY")
+    locked_dt: Optional[datetime] = Field(None, alias="LOCKED_DT")
+    locked_reason: Optional[str] = Field(None, alias="LOCKED_REASON")
+
+    class Config:
+        populate_by_name  = True 

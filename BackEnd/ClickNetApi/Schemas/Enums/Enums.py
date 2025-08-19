@@ -1,0 +1,12 @@
+from enum import Enum
+
+class ActivityType(str, Enum):
+    LOGIN = "LOGIN"
+    LOGOUT = "LOGOUT"
+    FUNDTRANSFER= "FUNDTRANSFER"
+    SECURITYUPDATE = "SECURITYUPDATE"
+    REGISTER = "REGISTER"
+    SIGNUP = "SIGNUP"
+    REQUEST = "REQUEST"
+    PROFILE = "PROFILE"
+    ACCOUNT = "ACCOUNT"
