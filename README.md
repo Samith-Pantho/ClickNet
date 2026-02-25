@@ -305,7 +305,7 @@ Didit is used for electronic Know Your Customer (eKYC) verification.
    ('DIDIT_WEBHOOK_SECRET', 'xxxxx'),  -- Webhook secret
    ('DIDIT_WEBHOOK_KEY', 'xxxxx');  -- Webhook key
    ```
-   **Important:** Note that `DIDIT_CALLBACK_URL` and your registered Didit webhook URL must point to your Nginx reverse proxy or Ngrok tunnel address (e.g., `https://api.yourdomain.com/didit-webhook`), not localhost.
+   **Important:** Note that `DIDIT_CALLBACK_URL` and your registered Didit webhook URL must point to your Ngrok tunnel address (e.g., `https://api.yourdomain.ngrok-free.app/didit-webhook`), not localhost or nginx.
 
 **Usage:**
 - The system creates Didit sessions for customer verification
@@ -342,7 +342,7 @@ Used for handling secure fund deposits and payments.
    ('STRIPE_CALLBACK_SUCCESS_URL', 'https://your-domain.com/addmoneycallback?data=_data_'),
    ('STRIPE_CALLBACK_CANCEL_URL', 'https://your-domain.com/addmoneycallback?data=_data_');
    ```
-   **Important:** Your registered Stripe webhook endpoint in the Stripe Dashboard must be configured to point to your Nginx reverse proxy address (e.g., `https://api.yourdomain.com/stripe-webhook`), not `localhost`.
+   **Important:** Your registered Stripe webhook endpoint in the Stripe Dashboard must be configured to point to your Ngrok tunnel address (e.g., `https://api.yourdomain.ngrok-free.app/stripe-webhook`), not `localhost` or `nginx`.
 
 **Usage:**
 - Use the Publishable Key in the frontend to securely tokenize payment methods.
@@ -396,7 +396,7 @@ Nginx is heavily utilized within the project as a reverse proxy to route traffic
 **Configuration:**
 - **Frontend Serving:** Nginx handles serving the production builds (`ClickNetWeb` and `ClickKYCWeb`) dynamically within their respective Docker containers via `nginx.conf`.
 - **API Routing:** Configured to map incoming frontend HTTP and WebSocket traffic securely to backend APIs (`clicknetweb -> api:8443` & `clickkycweb -> kyc:8444`).
-- **Webhook Exposing:** When deploying to production, 3rd-party webhook triggers (Stripe, Didit) must target the public Nginx domain, and Nginx reverse proxies those paths to internal `clicknetwebhook` and `clickkycwebhook` port mappings securely.
+- **Webhook Exposing:** When deploying to production or testing locally, 3rd-party webhook triggers (Stripe, Didit) must target the public Ngrok domain. Ngrok tunnels securely forward those incoming webhook events to the internal `clicknetwebhook` and `clickkycwebhook` services.
 
 #### Twilio (SMS & WhatsApp Messaging)
 Used for dispatching OTPs, temporary credentials, and important alerts via SMS or WhatsApp.
