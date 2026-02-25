@@ -160,10 +160,14 @@ ClickNet/
 ├── FrontEnd/                  # Frontend applications
 │   ├── clickkycweb/          # KYC web interface
 │   │   ├── Dockerfile
-│   │   ├── nginx.conf
+│   │   ├── nginx.conf         # Nginx configuration for ClickKYC Web
 │   │   ├── package.json
 │   │   └── src/               # React source code
 │   └── clicknetweb/          # Banking web interface
+│       ├── Dockerfile
+│       ├── nginx.conf         # Nginx configuration for ClickNet Web
+│       ├── package.json
+│       └── src/               # React source code
 ├── Database/                  # Database initialization scripts
 │   ├── CBS/                   # Core Banking System schemas
 │   ├── ClickKyc/             # KYC database schemas
@@ -301,6 +305,7 @@ Didit is used for electronic Know Your Customer (eKYC) verification.
    ('DIDIT_WEBHOOK_SECRET', 'xxxxx'),  -- Webhook secret
    ('DIDIT_WEBHOOK_KEY', 'xxxxx');  -- Webhook key
    ```
+   **Important:** Note that `DIDIT_CALLBACK_URL` and your registered Didit webhook URL must point to your Nginx reverse proxy or Ngrok tunnel address (e.g., `https://api.yourdomain.com/didit-webhook`), not localhost.
 
 **Usage:**
 - The system creates Didit sessions for customer verification
@@ -323,13 +328,56 @@ Used for bot protection on forms.
 **API Endpoint:**
 - `POST /VerifyCaptcha` - Verify CAPTCHA token
 
-#### WebSocket Configuration
-WebSockets are used for real-time communication:
-- Endpoint: `ws://api:8443/initialize/{session_id}`
-- Used for session management and real-time updates
+#### Stripe (Payment Processing)
+Used for handling secure fund deposits and payments.
 
-#### Ngrok (Tunneling)
-Ngrok provides secure tunnels for webhook callbacks.
+**Configuration:**
+1. Register and obtain API keys at [Stripe Dashboard](https://dashboard.stripe.com/apikeys)
+2. Update the following in `Database/ClickNet/APP_SETTINGS_Insert_Data.sql`:
+   ```sql
+   INSERT INTO APP_SETTINGS (`KEY`, VALUE) VALUES
+   ('STRIPE_PUBLISHABLE_KEY', 'xxxxx'),
+   ('STRIPE_SECRET_KEY', 'xxxxx'),
+   ('STRIPE_WEBHOOK_SECRET', 'xxxxx'),
+   ('STRIPE_CALLBACK_SUCCESS_URL', 'https://your-domain.com/addmoneycallback?data=_data_'),
+   ('STRIPE_CALLBACK_CANCEL_URL', 'https://your-domain.com/addmoneycallback?data=_data_');
+   ```
+   **Important:** Your registered Stripe webhook endpoint in the Stripe Dashboard must be configured to point to your Nginx reverse proxy address (e.g., `https://api.yourdomain.com/stripe-webhook`), not `localhost`.
+
+**Usage:**
+- Use the Publishable Key in the frontend to securely tokenize payment methods.
+- Use the Secret Key in the backend to create payment intents and confirm charges.
+- The webhook secret is used by the API webhook service to verify incoming Stripe events asynchronously.
+
+#### OpenAI (AI Assistant)
+Used to provide intelligent, contextual AI chat support for customers.
+
+**Configuration:**
+1. Generate an API Key from the [OpenAI Platform](https://platform.openai.com/api-keys)
+2. Update the following in `Database/ClickNet/APP_SETTINGS_Insert_Data.sql`:
+   ```sql
+   INSERT INTO APP_SETTINGS (`KEY`, VALUE) VALUES
+   ('OPENAI_API_KEY', 'xxxxx');
+   ```
+
+**Usage:**
+- The backend utilizes this key to process natural language queries from customers within the ClickNet helpdesk/chat interface.
+
+#### WebSocket Configuration
+WebSockets are configured to handle real-time notifications, session management, and live chat support dynamically.
+
+**Requirements & Configuration:**
+- Ensure the backend API is running. WebSocket endpoints bind to the main API server automatically.
+- **Connection URL Format:** `ws://<api-host>:<api-port>/initialize/{session_id}`
+  - Example Local: `ws://localhost:8443/initialize/session123`
+  - From Frontend (`clicknetweb`): `ws://localhost:3333/ws` (proxied to API)
+
+**Usage:**
+- Upon successful login, the frontend establishes a WS connection using the user's session ID.
+- The backend uses this dedicated channel to push real-time alerts (e.g., successful transactions, incoming transfers, KYC approval messages, or forced logouts for security).
+
+#### Ngrok (Tunneling for Local Webhooks)
+Ngrok provides secure tunnels for webhook callbacks during local development without a public domain.
 
 **Configuration:**
 1. Install ngrok CLI
@@ -340,15 +388,62 @@ Ngrok provides secure tunnels for webhook callbacks.
      - NGROK_AUTHTOKEN=xxxxx  # Your ngrok authtoken
    ```
 4. Configure tunnel URLs in `ngrok_net.yml` and `ngrok_kyc.yml`
+5. Map these Tunnel URLs in your Stripe and Didit developer dashboards.
+
+#### Nginx (Reverse Proxy & Static File Serving)
+Nginx is heavily utilized within the project as a reverse proxy to route traffic between the frontend React applications and the backend FastAPI services, as well as serving the static frontend builds.
+
+**Configuration:**
+- **Frontend Serving:** Nginx handles serving the production builds (`ClickNetWeb` and `ClickKYCWeb`) dynamically within their respective Docker containers via `nginx.conf`.
+- **API Routing:** Configured to map incoming frontend HTTP and WebSocket traffic securely to backend APIs (`clicknetweb -> api:8443` & `clickkycweb -> kyc:8444`).
+- **Webhook Exposing:** When deploying to production, 3rd-party webhook triggers (Stripe, Didit) must target the public Nginx domain, and Nginx reverse proxies those paths to internal `clicknetwebhook` and `clickkycwebhook` port mappings securely.
+
+#### Twilio (SMS & WhatsApp Messaging)
+Used for dispatching OTPs, temporary credentials, and important alerts via SMS or WhatsApp.
+
+**Configuration:**
+1. Register at [Twilio](https://www.twilio.com) and obtain an Account SID, Auth Token, and Sender Phone Number.
+2. Update the following in `Database/ClickNet/APP_SETTINGS_Insert_Data.sql`:
+   ```sql
+   INSERT INTO APP_SETTINGS (`KEY`, VALUE) VALUES
+   ('TWILIO_ACCOUNT_SID', 'xxxxx'),
+   ('TWILIO_AUTH_TOKEN', 'xxxxx'),
+   ('TWILIO_MOBILE_NUMBER', 'xxxxx');
+   ```
+
+**Usage:**
+- The backend configures notifications to use SMS based on the `CREDENTIALS_SENDING_PROCESS` and `DEFAULT_AUTHENTICATION_TYPE` system settings.
+
+#### Email Configuration (SMTP)
+Used for executing secure email delivery of account statements, signup credentials, and password-reset links to customers.
+
+**Configuration:**
+1. Configure an App Password for your SMTP email provider (e.g., Gmail).
+2. Update the following in `Database/ClickNet/APP_SETTINGS_Insert_Data.sql`:
+   ```sql
+   INSERT INTO APP_SETTINGS (`KEY`, VALUE) VALUES
+   ('CLICKNET_SENDER_EMAIL', 'xxxxx@gmail.com'),
+   ('CLICKNET_SENDER_EMAIL_PASS', 'xxxxx');
+   ```
+
+**Usage:**
+- The system uses these credentials to dispatch HTML-formatted transactional emails asynchronously through the backend services.
 
 #### Kafka (Message Queue)
-Used for asynchronous processing:
-- Bootstrap servers: `kafka:9092`
-- Topics: Auto-created for notifications, chat, etc.
+Used as an event-driven message broker for asynchronous processing and inter-service communication.
+
+**Configuration:**
+- Bootstrap servers configure to `kafka:9092` automatically via `docker-compose.yml`.
+- APIs rely on Kafka and Zookeeper being fully initialized.
+
+**Usage:**
+- **Notifications Channel**: Offloads resource-heavy operations like email, SMS, and WhatsApp dispatch to prevent blocking main API threads.
+- **Audit Logging**: Asynchronously collects and stores customer activities and transactions to ensure strict compliance tracking without performance hits.
+- **Real-Time Events**: Streams system-wide events (e.g., completed KYC verifications or successful Stripe deposits) to trigger subsequent automated workflows.
 
 ---
 
-## 🗄️ Database Setup
+## Database Setup
 
 The databases are automatically initialized using Docker volumes and SQL scripts:
 
@@ -397,5 +492,5 @@ For issues or questions:
 
 ## License
 
-[Add license information here]
+copyright © 2026 Samith Binda Pantho
 ---
